@@ -107,11 +107,23 @@ namespace server
                 HandlePairMeRequest(socket, username);
             }
 
+            //请求/gamestate端点
+            else if(request.StartsWith("GET /gamestate"))
+            {
+                //获取用户名
+                var requestUri = new Uri("http://localhost:8000" + request.Split(' ')[1]);
+                var queryParameters = HttpUtility.ParseQueryString(requestUri.Query);
+                var username = queryParameters.Get("player");
+                Console.WriteLine(username + " requested game state");
+                HandleGameStateRequest(socket, username);
+            }
+
             //关闭和客户端的连接，开始接收新的连接请求
             socket.Close();
             _SeverSocket.BeginAccept(new AsyncCallback(AcceptCallback), null);
         }
 
+        //请求的heading
         public static string MakeJsonResponse(string jsonContent)
         {
             return "HTTP/1.1 200 OK\r\n" +
@@ -122,6 +134,7 @@ namespace server
                    "Content-Length: " + jsonContent.Length + "\r\n\r\n" + jsonContent;
         }
 
+        //进行匹配
         public static void HandlePairMeRequest(Socket socket, string username)
         {
             string response;
@@ -158,6 +171,39 @@ namespace server
             //发送给客户端
             byte[] responseBytes = Encoding.UTF8.GetBytes(response);
             socket.Send(responseBytes);
-        } 
+        }
+
+        //实时检查匹配
+        public static void HandleGameStateRequest(Socket socket, string username)
+        {
+            string response;
+
+            // 检查是否有游戏正在进行
+            if (currentGame != null)
+            {
+                // 检查请求的用户名是否是游戏的其中一个玩家
+                if (currentGame.Player1 == username || currentGame.Player2 == username)
+                {
+                    var jsonResponse = JsonSerializer.Serialize(currentGame);
+                    response = MakeJsonResponse(jsonResponse);
+                }
+                else
+                {
+                    // 用户不是当前游戏的玩家
+                    var jsonResponse = JsonSerializer.Serialize(new { status = "not in game" });
+                    response = MakeJsonResponse(jsonResponse);
+                }
+            }
+            else
+            {
+                // 没有正在进行的游戏
+                var jsonResponse = JsonSerializer.Serialize(new { status = "no game" });
+                response = MakeJsonResponse(jsonResponse);
+            }
+
+            // 发送响应
+            byte[] responseBytes = Encoding.UTF8.GetBytes(response);
+            socket.Send(responseBytes);
+        }
     }
 }

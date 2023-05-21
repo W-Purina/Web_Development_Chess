@@ -71,7 +71,7 @@ const Pair_player = (username) => {
             //gameRecord需要包含gameId,gameState,player1,player2,player1LastMove, player2LastMove
             console.log(gameRecord);
              // 开始定时查询游戏状态
-            startPolling(username);
+            startPolling(currentUser);
             if(gameRecord.GameState === "wait"){
                 window.alert("Waiting for another player to join...");
             } 
@@ -87,7 +87,7 @@ const Pair_player = (username) => {
 
 // 检查游戏状态
 const checkGameState = (username) => {
-    fetch(`http://localhost:8000/gamestate?player=${username}`)
+    fetch(`http://localhost:8000/gamestate?player=${currentUser}`)
     .then(response => {
         if(response.ok){
             return response.json();
@@ -96,7 +96,6 @@ const checkGameState = (username) => {
         }
     })
     .then(gameRecord => {
-        console.log(gameRecord);
         if(gameRecord.GameState === "wait"){
             window.alert("Waiting for another player to join...");
         } else if(gameRecord.GameState === "progress"){
@@ -109,6 +108,6 @@ const checkGameState = (username) => {
 // 轮询服务器，检查游戏状态
 const startPolling = (username) => {
     setInterval(() => {
-        checkGameState(username);
+        checkGameState(currentUser);
     }, 5000); // 每5秒检查一次
 };
