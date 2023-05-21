@@ -25,6 +25,7 @@ const remove = (event) => {
 }
 
 let lastMove = "";
+let currentUser = null;
 
 //server的服务端口号
 //点击trygame进行第一次交互，server给出用户名
@@ -46,6 +47,7 @@ const Try_Game = () => {
         .then(username => {
             //把返回的username先打印在控制台
             console.log(username);
+            currentUser = username; // 新增：保存用户名
             window.alert(username + " Login");
         })
         .catch(error => {
@@ -56,7 +58,7 @@ const Try_Game = () => {
 
 //点击pairme进行一个匹配机制
 const Pair_player = (username) => {
-    fetch(`http://localhost:8000/pairme?player=${username}`)
+    fetch(`http://localhost:8000/pairme?player=${currentUser}`)
         .then(response =>{
             if(response.ok){
                 return response.json();
@@ -68,12 +70,45 @@ const Pair_player = (username) => {
         .then(gameRecord =>{
             //gameRecord需要包含gameId,gameState,player1,player2,player1LastMove, player2LastMove
             console.log(gameRecord);
-            if(gameRecord.gameState === "wait"){
+             // 开始定时查询游戏状态
+            startPolling(username);
+            if(gameRecord.GameState === "wait"){
                 window.alert("Waiting for another player to join...");
-            }
-            else if(gameRecord.gameState === "progress"){
-                window.alert("Game is in progress with player: "+gameRecord.player2);
+            } 
+            else if(gameRecord.status === "inline") {
+                window.alert("You have alread in the line");
+            }         
+            else if(gameRecord.GameState === "progress"){
+                window.alert(gameRecord.Player1 + " is playing with "+gameRecord.Player2);
             }        
         })
         .catch(error => console.log(error));
 }
+
+// 检查游戏状态
+const checkGameState = (username) => {
+    fetch(`http://localhost:8000/gamestate?player=${username}`)
+    .then(response => {
+        if(response.ok){
+            return response.json();
+        } else {
+            throw new Error(response.statusText);
+        }
+    })
+    .then(gameRecord => {
+        console.log(gameRecord);
+        if(gameRecord.GameState === "wait"){
+            window.alert("Waiting for another player to join...");
+        } else if(gameRecord.GameState === "progress"){
+            window.alert("Game is in progress with player: "+gameRecord.player2);
+        }
+    })
+    .catch(error => console.log(error));
+};
+
+// 轮询服务器，检查游戏状态
+const startPolling = (username) => {
+    setInterval(() => {
+        checkGameState(username);
+    }, 5000); // 每5秒检查一次
+};

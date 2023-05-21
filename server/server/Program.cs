@@ -42,7 +42,6 @@ namespace server
         //创建一个sockert实例，实例作为服务器servre
         private static Socket _SeverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         private static int counter = 0;
-        private static Player waitingPlayer = null;
         private static GameRecord currentGame = null;
 
         static void Main()
@@ -104,7 +103,7 @@ namespace server
                 //从请求中获取用户名
                 var requestUri = new Uri("http://localhost:8000" + request.Split(' ')[1]);
                 var queryParameters = HttpUtility.ParseQueryString(requestUri.Query);
-                var username = queryParameters.Get("username");
+                var username = queryParameters.Get("player");
                 HandlePairMeRequest(socket, username);
             }
 
@@ -126,42 +125,39 @@ namespace server
         public static void HandlePairMeRequest(Socket socket, string username)
         {
             string response;
-
-            //有玩家等待
-            if (waitingPlayer != null)
+            //如果已有游戏在等待玩家
+            if (currentGame != null && currentGame.GameState == "wait")
             {
-                //玩家已经再等待队列中了
-                if (waitingPlayer.Username == username)
+
+                //检查是否是同一玩家
+                if (currentGame.Player1 == username)
                 {
-                    var jsonResponse = JsonSerializer.Serialize(new { status = "intheline" });
+                    var jsonResponse = JsonSerializer.Serialize(new { status = "inline" });
                     response = MakeJsonResponse(jsonResponse);
+
                 }
-                //有新人上线进行匹配
                 else
                 {
-                    currentGame = new GameRecord(Guid.NewGuid(), "progress", waitingPlayer.Username, username, null, null);
+                    //将新玩家加入游戏并将游戏状态改为"progress"
+                    currentGame.Player2 = username;
+                    currentGame.GameState = "progress";
                     var jsonResponse = JsonSerializer.Serialize(currentGame);
-
-                    //匹配上了没人等
-                    waitingPlayer = null;
                     response = MakeJsonResponse(jsonResponse);
+
                 }
             }
-            //如果没人等待就创建一个
+            //没有游戏在等待玩家，创建新的游戏
             else
             {
-                waitingPlayer = new Player(username);
-                var jsonResponse = JsonSerializer.Serialize(new { status = "wait" });
+                currentGame = new GameRecord(Guid.NewGuid(), "wait", username, null, null, null);
+                var jsonResponse = JsonSerializer.Serialize(currentGame);
                 response = MakeJsonResponse(jsonResponse);
+
             }
 
             //发送给客户端
             byte[] responseBytes = Encoding.UTF8.GetBytes(response);
             socket.Send(responseBytes);
-        }
-
-
-
-
+        } 
     }
 }
