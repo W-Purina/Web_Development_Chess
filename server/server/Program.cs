@@ -2,19 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace server
 {
-    internal class Program
+    public class Program
     {
-        static async Task Main(string[] args)
+        private static Socket _SeverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        private static int counter = 0;
+
+        static void Main()
         {
-            int port = 8080;
-            var server = new HttpServer(IPAddress.Any, port);
-            Console.WriteLine($"Server is listening on port {port}");
-            await server.StartAsync();
+            Console.WriteLine("Setting up server ...");
+            _SeverSocket.Bind(new)
         }
     }
 }
