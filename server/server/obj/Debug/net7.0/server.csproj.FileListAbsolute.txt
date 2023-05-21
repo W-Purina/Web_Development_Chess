@@ -28,3 +28,18 @@ C:\Users\polaris\Desktop\711-A2\server\server\obj\Debug\net7.0\refint\server.dll
 C:\Users\polaris\Desktop\711-A2\server\server\obj\Debug\net7.0\server.pdb
 C:\Users\polaris\Desktop\711-A2\server\server\obj\Debug\net7.0\server.genruntimeconfig.cache
 C:\Users\polaris\Desktop\711-A2\server\server\obj\Debug\net7.0\ref\server.dll
+C:\Users\rpen966\OneDrive - The University of Auckland\Desktop\711-A2\server\server\bin\Debug\net7.0\server.exe
+C:\Users\rpen966\OneDrive - The University of Auckland\Desktop\711-A2\server\server\bin\Debug\net7.0\server.deps.json
+C:\Users\rpen966\OneDrive - The University of Auckland\Desktop\711-A2\server\server\bin\Debug\net7.0\server.runtimeconfig.json
+C:\Users\rpen966\OneDrive - The University of Auckland\Desktop\711-A2\server\server\bin\Debug\net7.0\server.dll
+C:\Users\rpen966\OneDrive - The University of Auckland\Desktop\711-A2\server\server\bin\Debug\net7.0\server.pdb
+C:\Users\rpen966\OneDrive - The University of Auckland\Desktop\711-A2\server\server\obj\Debug\net7.0\server.csproj.AssemblyReference.cache
+C:\Users\rpen966\OneDrive - The University of Auckland\Desktop\711-A2\server\server\obj\Debug\net7.0\server.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\rpen966\OneDrive - The University of Auckland\Desktop\711-A2\server\server\obj\Debug\net7.0\server.AssemblyInfoInputs.cache
+C:\Users\rpen966\OneDrive - The University of Auckland\Desktop\711-A2\server\server\obj\Debug\net7.0\server.AssemblyInfo.cs
+C:\Users\rpen966\OneDrive - The University of Auckland\Desktop\711-A2\server\server\obj\Debug\net7.0\server.csproj.CoreCompileInputs.cache
+C:\Users\rpen966\OneDrive - The University of Auckland\Desktop\711-A2\server\server\obj\Debug\net7.0\server.dll
+C:\Users\rpen966\OneDrive - The University of Auckland\Desktop\711-A2\server\server\obj\Debug\net7.0\refint\server.dll
+C:\Users\rpen966\OneDrive - The University of Auckland\Desktop\711-A2\server\server\obj\Debug\net7.0\server.pdb
+C:\Users\rpen966\OneDrive - The University of Auckland\Desktop\711-A2\server\server\obj\Debug\net7.0\server.genruntimeconfig.cache
+C:\Users\rpen966\OneDrive - The University of Auckland\Desktop\711-A2\server\server\obj\Debug\net7.0\ref\server.dll

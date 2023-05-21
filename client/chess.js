@@ -85,6 +85,8 @@ const Pair_player = (username) => {
         .catch(error => console.log(error));
 }
 
+// 保存定时器的 ID，以便之后可以取消它
+let pollingIntervalId = null; 
 // 检查游戏状态
 const checkGameState = (username) => {
     fetch(`http://localhost:8000/gamestate?player=${currentUser}`)
@@ -96,10 +98,23 @@ const checkGameState = (username) => {
         }
     })
     .then(gameRecord => {
+        console.log(gameRecord)
+        const messageElement = document.getElementById('gameStateMessage');
         if(gameRecord.GameState === "wait"){
-            window.alert("Waiting for another player to join...");
+            messageElement.innerText = "Waiting for another player to join...";
         } else if(gameRecord.GameState === "progress"){
-            window.alert("Game is in progress with player: "+gameRecord.player2);
+            document.getElementById('Pair_player').style.display = 'none';
+            if(gameRecord.Player1 !=currentUser){
+                messageElement.innerText = "Game is in progress with player: "+gameRecord.Player1;
+                document.getElementById('Send_my_move').style.display = 'none';
+                document.getElementById('Get_their_move').style.display = 'block';
+            }
+            else{
+                messageElement.innerText = "Game is in progress with player: "+gameRecord.Player2;
+                document.getElementById('Send_my_move').style.display = 'block';
+                document.getElementById('Get_their_move').style.display = 'none';
+            }
+            clearInterval(pollingIntervalId)
         }
     })
     .catch(error => console.log(error));
@@ -107,7 +122,25 @@ const checkGameState = (username) => {
 
 // 轮询服务器，检查游戏状态
 const startPolling = (username) => {
-    setInterval(() => {
-        checkGameState(currentUser);
-    }, 5000); // 每5秒检查一次
+    pollingIntervalId = setInterval(() => {
+        checkGameState(username);
+    }, 2000); // 每2秒检查一次
 };
+
+//处理Send_My_Move
+const Send_my_move = (username,gameId,Lastmove) =>{
+    fetch(`http://localhost:8000/mymove`, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            player: username,
+            id: gameId,
+            move: move
+        })
+    })
+    .then(response => response.json())
+    .then(gameRecord => console.log(gameRecord))
+    .catch(error => console.log(error));
+}

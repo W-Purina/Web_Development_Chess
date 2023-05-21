@@ -1,20 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\polaris\\Desktop\\711-A2\\server\\server\\server.csproj": {}
+    "C:\\Users\\rpen966\\OneDrive - The University of Auckland\\Desktop\\711-A2\\server\\server\\server.csproj": {}
   },
   "projects": {
-    "C:\\Users\\polaris\\Desktop\\711-A2\\server\\server\\server.csproj": {
+    "C:\\Users\\rpen966\\OneDrive - The University of Auckland\\Desktop\\711-A2\\server\\server\\server.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\polaris\\Desktop\\711-A2\\server\\server\\server.csproj",
+        "projectUniqueName": "C:\\Users\\rpen966\\OneDrive - The University of Auckland\\Desktop\\711-A2\\server\\server\\server.csproj",
         "projectName": "server",
-        "projectPath": "C:\\Users\\polaris\\Desktop\\711-A2\\server\\server\\server.csproj",
-        "packagesPath": "C:\\Users\\polaris\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\polaris\\Desktop\\711-A2\\server\\server\\obj\\",
+        "projectPath": "C:\\Users\\rpen966\\OneDrive - The University of Auckland\\Desktop\\711-A2\\server\\server\\server.csproj",
+        "packagesPath": "C:\\Users\\rpen966\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\rpen966\\OneDrive - The University of Auckland\\Desktop\\711-A2\\server\\server\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\polaris\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\rpen966\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -55,7 +59,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.203\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
         }
       }
     }

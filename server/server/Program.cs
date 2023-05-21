@@ -118,6 +118,22 @@ namespace server
                 HandleGameStateRequest(socket, username);
             }
 
+            //请求/mymove断点
+            else if(request.StartsWith("POST /mymove"))
+            {
+                // First, parse the JSON from the request body
+                var requestBody = Encoding.UTF8.GetString(buffer, 0, received);
+                var jsonDocument = JsonDocument.Parse(requestBody);
+
+                // Then, extract the parameters from the JSON
+                var player = jsonDocument.RootElement.GetProperty("player").GetString();
+                var id = jsonDocument.RootElement.GetProperty("id").GetGuid();
+                var move = jsonDocument.RootElement.GetProperty("move").GetString();
+
+                // Now, you can use the parameters to update the game record
+                HandleMyMoveRequest(socket, player, id, move);
+            }
+
             //关闭和客户端的连接，开始接收新的连接请求
             socket.Close();
             _SeverSocket.BeginAccept(new AsyncCallback(AcceptCallback), null);
@@ -205,5 +221,20 @@ namespace server
             byte[] responseBytes = Encoding.UTF8.GetBytes(response);
             socket.Send(responseBytes);
         }
+
+        //处理玩家发送move
+        public static void HandleMyMoveRequest(Socket socket, string username, Guid gameId, string move) 
+        { 
+            string response;
+
+            //检查游戏是否在进行并且游戏ID匹配
+            if(currentGame != null && currentGame.GameState == "progress" && currentGame.GameId == gameId)
+            {
+                //检查当前用户是否是Player中，我在前端限制了，只有player1先会出现send move的按钮
+
+
+            }
+        }
+
     }
 }
