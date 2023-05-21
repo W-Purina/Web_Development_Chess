@@ -1,0 +1,15 @@
+C:\Users\polaris\Desktop\UoA\2023--S1\711\A2\server\server\server\bin\Debug\net7.0\server.exe
+C:\Users\polaris\Desktop\UoA\2023--S1\711\A2\server\server\server\bin\Debug\net7.0\server.deps.json
+C:\Users\polaris\Desktop\UoA\2023--S1\711\A2\server\server\server\bin\Debug\net7.0\server.runtimeconfig.json
+C:\Users\polaris\Desktop\UoA\2023--S1\711\A2\server\server\server\bin\Debug\net7.0\server.dll
+C:\Users\polaris\Desktop\UoA\2023--S1\711\A2\server\server\server\bin\Debug\net7.0\server.pdb
+C:\Users\polaris\Desktop\UoA\2023--S1\711\A2\server\server\server\obj\Debug\net7.0\server.csproj.AssemblyReference.cache
+C:\Users\polaris\Desktop\UoA\2023--S1\711\A2\server\server\server\obj\Debug\net7.0\server.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\polaris\Desktop\UoA\2023--S1\711\A2\server\server\server\obj\Debug\net7.0\server.AssemblyInfoInputs.cache
+C:\Users\polaris\Desktop\UoA\2023--S1\711\A2\server\server\server\obj\Debug\net7.0\server.AssemblyInfo.cs
+C:\Users\polaris\Desktop\UoA\2023--S1\711\A2\server\server\server\obj\Debug\net7.0\server.csproj.CoreCompileInputs.cache
+C:\Users\polaris\Desktop\UoA\2023--S1\711\A2\server\server\server\obj\Debug\net7.0\server.dll
+C:\Users\polaris\Desktop\UoA\2023--S1\711\A2\server\server\server\obj\Debug\net7.0\refint\server.dll
+C:\Users\polaris\Desktop\UoA\2023--S1\711\A2\server\server\server\obj\Debug\net7.0\server.pdb
+C:\Users\polaris\Desktop\UoA\2023--S1\711\A2\server\server\server\obj\Debug\net7.0\server.genruntimeconfig.cache
+C:\Users\polaris\Desktop\UoA\2023--S1\711\A2\server\server\server\obj\Debug\net7.0\ref\server.dll
