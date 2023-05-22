@@ -25,12 +25,11 @@ namespace server
         public string Player2 { get; set; }
         public string Player1LastMove { get; set; }
         public string Player2LastMove { get; set; }
-        public string AuthenticateSend { get; set; }
-        public string AuthenticateGet { get; set; }
+        public string Authenticate { get; set; }
 
 
 
-        public GameRecord(Guid gameId, string gameState, string player1, string player2, string player1LastMove, string player2LastMove,string Authentication, string authenticateGet)
+        public GameRecord(Guid gameId, string gameState, string player1, string player2, string player1LastMove, string player2LastMove,string Authentication)
         {
             GameId = gameId;
             GameState = gameState;
@@ -38,8 +37,7 @@ namespace server
             Player2 = player2;
             Player1LastMove = player1LastMove;
             Player2LastMove = player2LastMove;
-            AuthenticateSend = Authentication;
-            AuthenticateGet = authenticateGet;
+            Authenticate = Authentication;
         }
     }
 
@@ -270,7 +268,7 @@ namespace server
             if (currentGame != null && currentGame.GameState == "progress" && currentGame.GameId == gameId)
             {
                 //检查当前用户是否是Player round
-                if (currentGame.AuthenticateSend == username)
+                if (currentGame.Authenticate == username)
                 {
                     //如果move是"\"\""，表示玩家没有移动
                     if (move != null || move != "\"\"")
@@ -278,13 +276,13 @@ namespace server
                         if (currentGame.Player1 == username)
                         {
                             currentGame.Player1LastMove = move;
-                            currentGame.AuthenticateSend = currentGame.Player2; // 修改为下一个玩家
+                            currentGame.Authenticate = currentGame.Player2; // 修改为下一个玩家
 
                         }
                         else if (currentGame.Player2 == username)
                         {
                             currentGame.Player2LastMove = move;
-                            currentGame.AuthenticateSend = currentGame.Player1; // 修改为下一个玩家
+                            currentGame.Authenticate = currentGame.Player1; // 修改为下一个玩家
                         }
                     }
                     else
@@ -325,7 +323,7 @@ namespace server
             if (currentGame != null && currentGame.GameState == "progress" && currentGame.GameId == gameId)
             {
                 //检查当前用户是否是Authenticate,不是user就可以改变
-                if (currentGame.AuthenticateGet != username)
+                if (currentGame.Authenticate != username)
                 {
                     var jsonResponse = new string("");
                     //返回另一个玩家的移动

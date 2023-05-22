@@ -114,9 +114,13 @@ const checkGameState = (username) => {
             } else if (gameRecord.GameState === "progress") {
                 document.getElementById('Pair_player').style.display = 'none';
                 if (gameRecord.Player1 != currentUser) {
+                    document.getElementById('Send_my_move').style.display = 'none';
+                    document.getElementById('Get_their_move').style.display = 'block';
                     messageElement.innerText = "Game is in progress with player: " + gameRecord.Player1;
                 }
                 else {
+                    document.getElementById('Send_my_move').style.display = 'block';
+                    document.getElementById('Get_their_move').style.display = 'none';
                     messageElement.innerText = "Game is in progress with player: " + gameRecord.Player2;
                 }
                 clearInterval(pollingIntervalId)
@@ -159,6 +163,9 @@ const Send_my_move = (username, move) => {
             else if (message == "Not your turn.") {
                 window.alert("It is not your round")
             }
+
+            document.getElementById('Send_my_move').style.display = 'none';
+            document.getElementById('Get_their_move').style.display = 'block';
         })
         .catch(error => console.log(error));
 
