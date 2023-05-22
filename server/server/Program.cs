@@ -25,8 +25,10 @@ namespace server
         public string Player2 { get; set; }
         public string Player1LastMove { get; set; }
         public string Player2LastMove { get; set; }
+        public string Authenticate { get; set; }
+        
 
-        public GameRecord(Guid gameId, string gameState, string player1, string player2, string player1LastMove, string player2LastMove)
+        public GameRecord(Guid gameId, string gameState, string player1, string player2, string player1LastMove, string player2LastMove,string Authentication)
         {
             GameId = gameId;
             GameState = gameState;
@@ -34,6 +36,7 @@ namespace server
             Player2 = player2;
             Player1LastMove = player1LastMove;
             Player2LastMove = player2LastMove;
+            Authenticate = Authentication;
         }
     }
 
@@ -118,20 +121,53 @@ namespace server
                 HandleGameStateRequest(socket, username);
             }
 
-            //请求/mymove断点
-            else if(request.StartsWith("POST /mymove"))
+            //请求/mymove端点
+            else if(request.StartsWith("GET /mymove"))
             {
-                // First, parse the JSON from the request body
-                var requestBody = Encoding.UTF8.GetString(buffer, 0, received);
-                var jsonDocument = JsonDocument.Parse(requestBody);
+                //解析URL的参数
+                var uri = new Uri("http://localhost" + request.Split(' ')[1]);
+                var query = HttpUtility.ParseQueryString(uri.Query);
 
-                // Then, extract the parameters from the JSON
-                var player = jsonDocument.RootElement.GetProperty("player").GetString();
-                var id = jsonDocument.RootElement.GetProperty("id").GetGuid();
-                var move = jsonDocument.RootElement.GetProperty("move").GetString();
 
-                // Now, you can use the parameters to update the game record
-                HandleMyMoveRequest(socket, player, id, move);
+                var player = query.Get("player");
+                string idString = query.Get("id");
+                var move = query.Get("move");
+
+                Guid id;
+                if (!string.IsNullOrEmpty(idString) && Guid.TryParse(idString, out id))
+                {
+                    // id 参数有效，可以使用 id 进行后续操作
+                    HandleMyMoveRequest(socket, player, id, move);
+                }
+                else
+                {
+                    // id 参数无效，返回错误信息或进行其他处理
+                    Console.WriteLine("Invalid id parameter.");
+                }                          
+            }
+
+            //请求/GetTheirMove断点
+            else if(request.StartsWith("GET /theirmove"))
+            {
+                // 解析 URL 参数
+                var uri = new Uri("http://localhost" + request.Split(' ')[1]);
+                var query = HttpUtility.ParseQueryString(uri.Query);
+
+                var player = query.Get("player");
+                string idString = query.Get("id");
+
+                Guid id;
+                if (!string.IsNullOrEmpty(idString) && Guid.TryParse(idString, out id))
+                {
+                    // id 参数有效，可以使用 id 进行后续操作
+                    HandleTheirMoveRequest(socket, player, id);
+                }
+                else
+                {
+                    // id 参数无效，返回错误信息或进行其他处理
+                    Console.WriteLine("Invalid id parameter.");
+                }
+
             }
 
             //关闭和客户端的连接，开始接收新的连接请求
@@ -178,7 +214,7 @@ namespace server
             //没有游戏在等待玩家，创建新的游戏
             else
             {
-                currentGame = new GameRecord(Guid.NewGuid(), "wait", username, null, null, null);
+                currentGame = new GameRecord(Guid.NewGuid(), "wait", username, null, null, null,username);
                 var jsonResponse = JsonSerializer.Serialize(currentGame);
                 response = MakeJsonResponse(jsonResponse);
 
@@ -223,26 +259,80 @@ namespace server
         }
 
         //处理玩家发送move
-        public static void HandleMyMoveRequest(Socket socket, string username, Guid gameId, string move) 
-        { 
+        public static void HandleMyMoveRequest(Socket socket, string username, Guid gameId, string move)
+        {
             string response;
 
             //检查游戏是否在进行并且游戏ID匹配
-            if(currentGame != null && currentGame.GameState == "progress" && currentGame.GameId == gameId)
+            if (currentGame != null && currentGame.GameState == "progress" && currentGame.GameId == gameId)
             {
-                //检查当前用户是否是Player中，我在前端限制了，只有player1先会出现send move的按钮
-                if(currentGame.Player1 == username)
+                //检查当前用户是否是Player round
+                if (currentGame.Authenticate == username)
                 {
-                    currentGame.Player1LastMove= move;
-                }
-                else if(currentGame.Player2 == username)
-                {
-                    currentGame.Player2LastMove= move;
-                }
+                    //如果move是"\"\""，表示玩家没有移动
+                    if (move != null || move != "\"\"")
+                    {
+                        if (currentGame.Player1 == username)
+                        {
+                            currentGame.Player1LastMove = move;
+                            currentGame.Authenticate = currentGame.Player2; // 修改为下一个玩家
 
-                // 返回更新后的游戏记录
-                var jsonResponse = JsonSerializer.Serialize(currentGame);
-                response = MakeJsonResponse(jsonResponse);
+                        }
+                        else if (currentGame.Player2 == username)
+                        {
+                            currentGame.Player2LastMove = move;
+                            currentGame.Authenticate = currentGame.Player1; // 修改为下一个玩家
+                        }
+                    }
+                    else
+                    {
+                        var errorResponse = JsonSerializer.Serialize(new { status = "error", message = "No move made." });
+                        response = MakeJsonResponse(errorResponse);
+                    }
+
+                    // 返回更新后的游戏记录
+                    var jsonResponse = JsonSerializer.Serialize(currentGame);
+                    response = MakeJsonResponse(jsonResponse);
+                }
+                else
+                {
+                    //如果当前用户不是Authenticate，返回错误
+                    var errorResponse = JsonSerializer.Serialize(new { status = "error", message = "Not your turn." });
+                    response = MakeJsonResponse(errorResponse);
+                }
+            }
+            else
+            {
+                //如果游戏没有进行或者查不到ID，返回错误
+                var errorResponse = JsonSerializer.Serialize(new { status = "error", message = "Game not in progress or invalid game ID" });
+                response = MakeJsonResponse(errorResponse);
+            }
+
+            // 发送响应
+            byte[] responseBytes = Encoding.UTF8.GetBytes(response);
+            socket.Send(responseBytes);
+        }
+
+        //处理玩家GetMove
+        public static void HandleTheirMoveRequest(Socket socket, string username, Guid gameId)
+        {
+            string response;
+
+            //检查游戏是否在进行并且游戏ID匹配
+            if (currentGame != null && currentGame.GameState == "progress" && currentGame.GameId == gameId)
+            {
+                //检查当前用户是否是player2，因为只有player2才能看到player1的移动
+                if (currentGame.Player2 == username)
+                {
+                    // 返回player1的移动
+                    var jsonResponse = JsonSerializer.Serialize(new { player1Move = currentGame.Player1LastMove });
+                    response = MakeJsonResponse(jsonResponse);
+                }
+                else
+                {
+                    var errorResponse = JsonSerializer.Serialize(new { status = "error", message = "Not your turn." });
+                    response = MakeJsonResponse(errorResponse);
+                }
             }
             else
             {
