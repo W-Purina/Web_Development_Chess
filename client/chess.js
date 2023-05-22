@@ -2,6 +2,10 @@
 const move = (event) => {
     event.dataTransfer.setData("text/plain", event.target.id)
 }
+
+// 使用一个对象来保存棋子的位置
+//let piecePositions = {};
+
 const drop = (event) => {
     if (event.dataTransfer !== null) {
         const data = event.dataTransfer.getData("text/plain")
@@ -10,6 +14,10 @@ const drop = (event) => {
         if (targetID) {
         }
         else {
+            //更新棋子的位置
+            //piecePositions[data] = targetID;
+            //lastMove = {piece:data,position:targetID}
+
             event.target.appendChild(document.getElementById(data))
         }
     }
@@ -128,7 +136,7 @@ const startPolling = (username) => {
 };
 
 //处理Send_My_Move
-const Send_my_move = (username,gameId,Lastmove) =>{
+const Send_my_move = (username,gameId,move) =>{
     fetch(`http://localhost:8000/mymove`, {
         method: "POST",
         headers: {

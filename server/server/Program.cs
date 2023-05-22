@@ -231,9 +231,29 @@ namespace server
             if(currentGame != null && currentGame.GameState == "progress" && currentGame.GameId == gameId)
             {
                 //检查当前用户是否是Player中，我在前端限制了，只有player1先会出现send move的按钮
+                if(currentGame.Player1 == username)
+                {
+                    currentGame.Player1LastMove= move;
+                }
+                else if(currentGame.Player2 == username)
+                {
+                    currentGame.Player2LastMove= move;
+                }
 
-
+                // 返回更新后的游戏记录
+                var jsonResponse = JsonSerializer.Serialize(currentGame);
+                response = MakeJsonResponse(jsonResponse);
             }
+            else
+            {
+                //如果游戏没有进行或者查不到ID，返回错误
+                var errorResponse = JsonSerializer.Serialize(new { status = "error", message = "Game not in progress or invalid game ID" });
+                response = MakeJsonResponse(errorResponse);
+            }
+
+            // 发送响应
+            byte[] responseBytes = Encoding.UTF8.GetBytes(response);
+            socket.Send(responseBytes);
         }
 
     }
