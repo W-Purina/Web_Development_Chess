@@ -96,7 +96,7 @@ namespace server
 
         }
 
-        //前端连接处理请求的brige
+        //处理线程
         private static void AcceptCallback(IAsyncResult AR)
         {
             //结束接收连接请求，返回新的socket用于和客户端通信
@@ -113,136 +113,149 @@ namespace server
                 return;
             }
 
-
-            byte[] buffer = new byte[socket.ReceiveBufferSize];
-
-            //接收来自客户端的数据
-            int received = socket.Receive(buffer, SocketFlags.None);
-            if (received <= 0) return;
-
-            //将接收到的字节转换成字符串
-            string request = Encoding.UTF8.GetString(buffer, 0, received);
-
-            ///register端点的
-            if (request.StartsWith("GET /register"))
-            {
-                Console.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId} sent response to  {socket.RemoteEndPoint}  for /register");
-                HandleRegisterRequest(socket);
-            }
-
-            //请求进入游戏
-            else if(request.StartsWith("GET /trygame"))
-            {
-                // 从请求中获取用户名
-                var requestUri = new Uri("http://localhost:8000" + request.Split(' ')[1]);
-                var queryParameters = HttpUtility.ParseQueryString(requestUri.Query);
-                var username = queryParameters.Get("username");
-
-                // 处理 /trygame 请求
-                HandleTryGameRequest(socket, username);
-            }
-
-            //请求/pairme端点
-            else if (request.StartsWith("GET /pairme"))
-            {
-                //从请求中获取用户名
-                var requestUri = new Uri("http://localhost:8000" + request.Split(' ')[1]);
-                var queryParameters = HttpUtility.ParseQueryString(requestUri.Query);
-                var username = queryParameters.Get("player");
-
-                Console.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId} send response to {socket.RemoteEndPoint}  for /pairme?player={username} ");
-                HandlePairMeRequest(socket, username);
-            }
-
-            //请求/gamestate端点
-            else if (request.StartsWith("GET /gamestate"))
-            {
-                //获取用户名
-                var requestUri = new Uri("http://localhost:8000" + request.Split(' ')[1]);
-                var queryParameters = HttpUtility.ParseQueryString(requestUri.Query);
-                var username = queryParameters.Get("player");
-                HandleGameStateRequest(socket, username);
-            }
-
-            //请求/mymove端点
-            else if (request.StartsWith("GET /mymove"))
-            {
-                //解析URL的参数
-                var uri = new Uri("http://localhost" + request.Split(' ')[1]);
-                var query = HttpUtility.ParseQueryString(uri.Query);
-
-
-                var player = query.Get("player");
-                string idString = query.Get("id");
-                var move = query.Get("move");
-
-                Guid id;
-                if (!string.IsNullOrEmpty(idString) && Guid.TryParse(idString, out id))
-                {
-                    Console.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId} send response to {socket.RemoteEndPoint}  for /mymove?player={player}&id={idString}&move={move}");
-
-                    // id 参数有效，可以使用 id 进行后续操作
-                    HandleMyMoveRequest(socket, player, id, move);
-                }
-                else
-                {
-                    // id 参数无效，返回错误信息或进行其他处理
-                    Console.WriteLine("Invalid id parameter.");
-                }
-            }
-
-            //请求/GetTheirMove端点
-            else if (request.StartsWith("GET /theirmove"))
-            {
-                // 解析 URL 参数
-                var uri = new Uri("http://localhost" + request.Split(' ')[1]);
-                var query = HttpUtility.ParseQueryString(uri.Query);
-
-                var player = query.Get("player");
-                string idString = query.Get("id");
-
-                Guid id;
-                if (!string.IsNullOrEmpty(idString) && Guid.TryParse(idString, out id))
-                {
-                    Console.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId} send response to {socket.RemoteEndPoint}  for /theirmove?player={player}&id={idString}");
-                    // id 参数有效，可以使用 id 进行后续操作
-                    HandleTheirMoveRequest(socket, player, id);
-                }
-                else
-                {
-                    // id 参数无效，返回错误信息或进行其他处理
-                    Console.WriteLine("Invalid id parameter.");
-                }
-
-            }
-
-            //处理Quit
-            else if (request.StartsWith("GET /quit"))
-            {
-                //解析URL的参数
-                var uri = new Uri("http://localhost" + request.Split(' ')[1]);
-                var query = HttpUtility.ParseQueryString(uri.Query);
-
-                var player = query.Get("player");
-                string idString = query.Get("id");
-
-                Guid id;
-                if (!string.IsNullOrEmpty(idString) && Guid.TryParse(idString, out id))
-                {
-                    Console.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId} closing connection with {socket.RemoteEndPoint} and terminating");
-                    // id 参数有效，可以使用 id 进行后续操作
-                    HandleQuitRequest(socket, player, id);
-                }
-                else
-                {
-                    // id 参数无效，返回错误信息或进行其他处理
-                    Console.WriteLine("Invalid id parameter.");
-                }
-            }
-
-            //关闭和客户端的连接，开始接收新的连接请求
-            socket.Close();
+            // 开始接收下一个连接请求
             _SeverSocket.BeginAccept(new AsyncCallback(AcceptCallback), null);
+
+            // 创建新的任务来处理这个连接
+            Task.Run(() => HandleRequest(socket));
+        }
+
+        //处理请求
+        private static void HandleRequest(Socket socket)
+        {
+            // 保持接收数据直到客户端关闭连接
+            while (true)
+            {
+                byte[] buffer = new byte[socket.ReceiveBufferSize];
+
+                //接收来自客户端的数据
+                int received = socket.Receive(buffer, SocketFlags.None);
+                if (received <= 0) break;  // 如果没有接收到数据，那么客户端可能已经关闭了连接
+
+                //将接收到的字节转换成字符串
+                string request = Encoding.UTF8.GetString(buffer, 0, received);
+
+                // 处理请求
+                ///register端点的
+                if (request.StartsWith("GET /register"))
+                {
+                    Console.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId} sent response to  {socket.RemoteEndPoint}  for /register");
+                    HandleRegisterRequest(socket);
+                }
+
+                //请求进入游戏
+                else if (request.StartsWith("GET /trygame"))
+                {
+                    // 从请求中获取用户名
+                    var requestUri = new Uri("http://localhost:8000" + request.Split(' ')[1]);
+                    var queryParameters = HttpUtility.ParseQueryString(requestUri.Query);
+                    var username = queryParameters.Get("username");
+
+                    // 处理 /trygame 请求
+                    HandleTryGameRequest(socket, username);
+                }
+
+                //请求/pairme端点
+                else if (request.StartsWith("GET /pairme"))
+                {
+                    //从请求中获取用户名
+                    var requestUri = new Uri("http://localhost:8000" + request.Split(' ')[1]);
+                    var queryParameters = HttpUtility.ParseQueryString(requestUri.Query);
+                    var username = queryParameters.Get("player");
+
+                    Console.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId} send response to {socket.RemoteEndPoint}  for /pairme?player={username} ");
+                    HandlePairMeRequest(socket, username);
+                }
+
+                //请求/gamestate端点
+                else if (request.StartsWith("GET /gamestate"))
+                {
+                    //获取用户名
+                    var requestUri = new Uri("http://localhost:8000" + request.Split(' ')[1]);
+                    var queryParameters = HttpUtility.ParseQueryString(requestUri.Query);
+                    var username = queryParameters.Get("player");
+                    HandleGameStateRequest(socket, username);
+                }
+
+                //请求/mymove端点
+                else if (request.StartsWith("GET /mymove"))
+                {
+                    //解析URL的参数
+                    var uri = new Uri("http://localhost" + request.Split(' ')[1]);
+                    var query = HttpUtility.ParseQueryString(uri.Query);
+
+
+                    var player = query.Get("player");
+                    string idString = query.Get("id");
+                    var move = query.Get("move");
+
+                    Guid id;
+                    if (!string.IsNullOrEmpty(idString) && Guid.TryParse(idString, out id))
+                    {
+                        Console.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId} send response to {socket.RemoteEndPoint}  for /mymove?player={player}&id={idString}&move={move}");
+
+                        // id 参数有效，可以使用 id 进行后续操作
+                        HandleMyMoveRequest(socket, player, id, move);
+                    }
+                    else
+                    {
+                        // id 参数无效，返回错误信息或进行其他处理
+                        Console.WriteLine("Invalid id parameter.");
+                    }
+                }
+
+                //请求/GetTheirMove端点
+                else if (request.StartsWith("GET /theirmove"))
+                {
+                    // 解析 URL 参数
+                    var uri = new Uri("http://localhost" + request.Split(' ')[1]);
+                    var query = HttpUtility.ParseQueryString(uri.Query);
+
+                    var player = query.Get("player");
+                    string idString = query.Get("id");
+
+                    Guid id;
+                    if (!string.IsNullOrEmpty(idString) && Guid.TryParse(idString, out id))
+                    {
+                        Console.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId} send response to {socket.RemoteEndPoint}  for /theirmove?player={player}&id={idString}");
+                        // id 参数有效，可以使用 id 进行后续操作
+                        HandleTheirMoveRequest(socket, player, id);
+                    }
+                    else
+                    {
+                        // id 参数无效，返回错误信息或进行其他处理
+                        Console.WriteLine("Invalid id parameter.");
+                    }
+
+                }
+
+                //处理Quit
+                else if (request.StartsWith("GET /quit"))
+                {
+                    //解析URL的参数
+                    var uri = new Uri("http://localhost" + request.Split(' ')[1]);
+                    var query = HttpUtility.ParseQueryString(uri.Query);
+
+                    var player = query.Get("player");
+                    string idString = query.Get("id");
+
+                    Guid id;
+                    if (!string.IsNullOrEmpty(idString) && Guid.TryParse(idString, out id))
+                    {
+                        Console.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId} closing connection with {socket.RemoteEndPoint} and terminating");
+                        // id 参数有效，可以使用 id 进行后续操作
+                        HandleQuitRequest(socket, player, id);
+                    }
+                    else
+                    {
+                        // id 参数无效，返回错误信息或进行其他处理
+                        Console.WriteLine("Invalid id parameter.");
+                    }
+                }
+            }
+
+            // 客户端已经关闭连接，现在我们可以关闭我们的端
+            socket.Close();
         }
 
         //请求的heading
@@ -310,7 +323,6 @@ namespace server
             byte[] responseBytes = Encoding.UTF8.GetBytes(response);
             socket.Send(responseBytes);
         }
-
 
         //进行匹配
         public static void HandlePairMeRequest(Socket socket, string username)
