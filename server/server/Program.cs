@@ -1,12 +1,13 @@
 ﻿using System.Net;
 using System.Net.Sockets;
+using System.Runtime.Intrinsics.X86;
 using System.Text;
 using System.Text.Json;
 using System.Web;
 
 namespace server
 {
-
+    //用户
     public class Player
     {
         public string Username { get; set; }
@@ -17,14 +18,15 @@ namespace server
         }
     }
 
+    //游戏数据
     public class GameRecord
     {
         public Guid GameId { get; set; }
         public string GameState { get; set; }
         public string Player1 { get; set; }
         public string Player2 { get; set; }
-        public string Player1LastMove { get; set; }
-        public string Player2LastMove { get; set; }
+        public List<Move> Player1LastMove { get; set; }
+        public List<Move> Player2LastMove { get; set; }
         public string Authenticate { get; set; }
 
 
@@ -35,10 +37,25 @@ namespace server
             GameState = gameState;
             Player1 = player1;
             Player2 = player2;
-            Player1LastMove = player1LastMove;
-            Player2LastMove = player2LastMove;
+            Player1LastMove = new List<Move>();  // 初始化列表
+            Player2LastMove = new List<Move>();  // 初始化列表
             Authenticate = Authentication;
         }
+    }
+
+    //移动数据-3个参数
+    public class Move
+    {
+        public string Piece { get; set; }
+        public string From { get; set; }
+        public string To { get; set; }
+    }
+
+    //玩家移动数据
+    public class Game
+    {
+        public List<Move> Player1LastMove { get; set; }
+        public List<Move> Player2LastMove { get; set; }
     }
 
     public class Program
@@ -47,6 +64,18 @@ namespace server
         private static Socket _SeverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         private static int counter = 0;
         private static GameRecord currentGame = null;
+
+        // 将gameList设为一个字典
+        private static Dictionary<Guid, GameRecord> gameList = new Dictionary<Guid, GameRecord>();
+
+        //用户名库
+        private static List<string> availableUsernames = new List<string>
+        {
+            "Alice", "Bob", "Charlie", "Dave", "Eve", "Frank", "Grace", "Hank", "Ivy", "Jack","Ethan","Olivia",
+            "Liam","Emma","Noah","Ava","Mason","Sophia","Lucas","Isabella","Oliver","Mia","Aiden","Charlotte","Elijah",
+            "Amelia","James","Harper","Benjamin","Evelyn"
+        };
+        private static HashSet<string> registeredUsers = new HashSet<string>();
 
         static void Main()
         {
@@ -59,7 +88,7 @@ namespace server
 
             //异步接受链接请求
             _SeverSocket.BeginAccept(new AsyncCallback(AcceptCallback), null);
-            Console.WriteLine("Sever is listening");
+            Console.WriteLine("Sever is listening http://localhost:8000");
 
             //阻塞主线程，防止应用程序立即关闭
             while (true) { }
@@ -81,24 +110,22 @@ namespace server
             //将接收到的字节转换成字符串
             string request = Encoding.UTF8.GetString(buffer, 0, received);
 
-            //检查请求是否是对/register端点的
+            ///register端点的
             if (request.StartsWith("GET /register"))
             {
-                //生成一个用户名
-                string username = "user" + counter++;
-                Console.WriteLine(username);
+                HandleRegisterRequest(socket);
+            }
 
-                //创建响应 HTTP 版本（HTTP/1.1），状态码（200），以及状态文本（OK）
-                //Content-Length 表示后面的主体部分（即响应的实际内容）的长度
-                //username：这是响应的主体，即实际返回给请求者的数据
-                string response = "HTTP/1.1 200 OK\r\n" +
-                    "Access-Control-Allow-Origin: *\r\n" +
-                    "Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS\r\n" +
-                    "Access-Control-Allow-Headers: Content-Type\r\n" +
-                    "Content-Length: " + username.Length + "\r\n\r\n" + username;
-                //将响应转换成字节数并发送给客户端
-                byte[] responseBytes = Encoding.UTF8.GetBytes(response);
-                socket.Send(responseBytes);
+            //请求进入游戏
+            else if(request.StartsWith("GET /trygame"))
+            {
+                // 从请求中获取用户名
+                var requestUri = new Uri("http://localhost:8000" + request.Split(' ')[1]);
+                var queryParameters = HttpUtility.ParseQueryString(requestUri.Query);
+                var username = queryParameters.Get("username");
+
+                // 处理 /trygame 请求
+                HandleTryGameRequest(socket, username);
             }
 
             //请求/pairme端点
@@ -147,7 +174,7 @@ namespace server
                 }
             }
 
-            //请求/GetTheirMove断点
+            //请求/GetTheirMove端点
             else if (request.StartsWith("GET /theirmove"))
             {
                 // 解析 URL 参数
@@ -171,6 +198,29 @@ namespace server
 
             }
 
+            //处理Quit
+            else if (request.StartsWith("GET /quit"))
+            {
+                //解析URL的参数
+                var uri = new Uri("http://localhost" + request.Split(' ')[1]);
+                var query = HttpUtility.ParseQueryString(uri.Query);
+
+                var player = query.Get("player");
+                string idString = query.Get("id");
+
+                Guid id;
+                if (!string.IsNullOrEmpty(idString) && Guid.TryParse(idString, out id))
+                {
+                    // id 参数有效，可以使用 id 进行后续操作
+                    HandleQuitRequest(socket, player, id);
+                }
+                else
+                {
+                    // id 参数无效，返回错误信息或进行其他处理
+                    Console.WriteLine("Invalid id parameter.");
+                }
+            }
+
             //关闭和客户端的连接，开始接收新的连接请求
             socket.Close();
             _SeverSocket.BeginAccept(new AsyncCallback(AcceptCallback), null);
@@ -186,6 +236,62 @@ namespace server
                    "Content-Type: application/json\r\n" +
                    "Content-Length: " + jsonContent.Length + "\r\n\r\n" + jsonContent;
         }
+
+        //注册需求
+        public static void HandleRegisterRequest(Socket socket)
+        {
+            if (availableUsernames.Count == 0)
+            {
+                // 如果没有可用的用户名，返回错误信息
+                string jsonResponse = JsonSerializer.Serialize(new { status = "error", message = "No available usernames" });
+                string response = MakeJsonResponse(jsonResponse);
+                byte[] responseBytes = Encoding.UTF8.GetBytes(response);
+                socket.Send(responseBytes);
+            }
+            else
+            {
+                // 随机选择一个用户名并从列表中移除
+                var random = new Random();
+                int index = random.Next(availableUsernames.Count);
+                string username = availableUsernames[index];
+                availableUsernames.RemoveAt(index);
+
+                // 将用户名添加到注册用户的集合中
+                registeredUsers.Add(username);
+
+                // 返回用户名
+                string response = "HTTP/1.1 200 OK\r\n" +
+                    "Access-Control-Allow-Origin: *\r\n" +
+                    "Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS\r\n" +
+                    "Access-Control-Allow-Headers: Content-Type\r\n" +
+                    "Content-Length: " + username.Length + "\r\n\r\n" + username;
+                byte[] responseBytes = Encoding.UTF8.GetBytes(response);
+                socket.Send(responseBytes);
+            }
+        }
+
+        //tryGame进行检查
+        public static void HandleTryGameRequest(Socket socket, string username)
+        {
+            string response;
+
+            // 检查用户是否已注册
+            if (!registeredUsers.Contains(username))
+            {
+                var jsonResponse = JsonSerializer.Serialize(new { status = "error", message = "User not registered" });
+                response = MakeJsonResponse(jsonResponse);
+            }
+            else
+            {
+                var jsonResponse = JsonSerializer.Serialize(new { status = "success", message = "User is registered. You can start the game" });
+                response = MakeJsonResponse(jsonResponse);
+            }
+
+            // 发送给客户端
+            byte[] responseBytes = Encoding.UTF8.GetBytes(response);
+            socket.Send(responseBytes);
+        }
+
 
         //进行匹配
         public static void HandlePairMeRequest(Socket socket, string username)
@@ -210,6 +316,9 @@ namespace server
                     var jsonResponse = JsonSerializer.Serialize(currentGame);
                     response = MakeJsonResponse(jsonResponse);
 
+                    // 将currentGame的新状态更新到gameList中
+                    gameList[currentGame.GameId] = currentGame; ;
+
                 }
             }
             //没有游戏在等待玩家，创建新的游戏
@@ -218,6 +327,9 @@ namespace server
                 currentGame = new GameRecord(Guid.NewGuid(), "wait", username, null, null, null, username);
                 var jsonResponse = JsonSerializer.Serialize(currentGame);
                 response = MakeJsonResponse(jsonResponse);
+
+                // 将新创建的currentGame添加到gameList中
+                gameList.Add(currentGame.GameId, currentGame);
 
             }
 
@@ -263,32 +375,42 @@ namespace server
         public static void HandleMyMoveRequest(Socket socket, string username, Guid gameId, string move)
         {
             string response;
+            byte[] responseBytes;  // 这里声明了responseBytes变量
 
-            //检查游戏是否在进行并且游戏ID匹配
+            // 解析move字符串成为Move列表对象
+            List<Move> moveList = JsonSerializer.Deserialize<List<Move>>(move);
+
+            // 检查游戏是否在进行并且游戏ID匹配
             if (currentGame != null && currentGame.GameState == "progress" && currentGame.GameId == gameId)
             {
-                //检查当前用户是否是Player round
+                // 检查当前用户是否是Player round
                 if (currentGame.Authenticate == username)
                 {
-                    //如果move是"\"\""，表示玩家没有移动
-                    if (move != null || move != "\"\"")
+                    // 遍历每个move
+                    foreach (Move moveObj in moveList)
                     {
-                        if (currentGame.Player1 == username)
+                        // 如果move是null，表示玩家没有移动
+                        if (moveObj != null)
                         {
-                            currentGame.Player1LastMove = move;
-                            currentGame.Authenticate = currentGame.Player2; // 修改为下一个玩家
-
+                            if (currentGame.Player1 == username)
+                            {
+                                currentGame.Player1LastMove.Add(moveObj);  // 添加移动到玩家1的移动列表
+                                currentGame.Authenticate = currentGame.Player2; // 修改为下一个玩家
+                            }
+                            else if (currentGame.Player2 == username)
+                            {
+                                currentGame.Player2LastMove.Add(moveObj);  // 添加移动到玩家2的移动列表
+                                currentGame.Authenticate = currentGame.Player1; // 修改为下一个玩家
+                            }
                         }
-                        else if (currentGame.Player2 == username)
+                        else
                         {
-                            currentGame.Player2LastMove = move;
-                            currentGame.Authenticate = currentGame.Player1; // 修改为下一个玩家
+                            var errorResponse = JsonSerializer.Serialize(new { status = "error", message = "No move made." });
+                            response = MakeJsonResponse(errorResponse);
+                            responseBytes = Encoding.UTF8.GetBytes(response);
+                            socket.Send(responseBytes);
+                            return;
                         }
-                    }
-                    else
-                    {
-                        var errorResponse = JsonSerializer.Serialize(new { status = "error", message = "No move made." });
-                        response = MakeJsonResponse(errorResponse);
                     }
 
                     // 返回更新后的游戏记录
@@ -297,20 +419,20 @@ namespace server
                 }
                 else
                 {
-                    //如果当前用户不是Authenticate，返回错误
+                    // 如果当前用户不是Authenticate，返回错误
                     var errorResponse = JsonSerializer.Serialize(new { status = "error", message = "Not your turn." });
                     response = MakeJsonResponse(errorResponse);
                 }
             }
             else
             {
-                //如果游戏没有进行或者查不到ID，返回错误
+                // 如果游戏没有进行或者查不到ID，返回错误
                 var errorResponse = JsonSerializer.Serialize(new { status = "error", message = "Game not in progress or invalid game ID" });
                 response = MakeJsonResponse(errorResponse);
             }
 
             // 发送响应
-            byte[] responseBytes = Encoding.UTF8.GetBytes(response);
+            responseBytes = Encoding.UTF8.GetBytes(response);
             socket.Send(responseBytes);
         }
 
@@ -322,27 +444,50 @@ namespace server
             //检查游戏是否在进行并且游戏ID匹配
             if (currentGame != null && currentGame.GameState == "progress" && currentGame.GameId == gameId)
             {
-                //检查当前用户是否是Authenticate,不是user就可以改变
-                if (currentGame.Authenticate != username)
+                //检查当前用户是否是Authenticate,是user则可以查看
+                if (currentGame.Authenticate == username)
                 {
                     var jsonResponse = new string("");
+                    List<Move> otherPlayerMoves;
+
                     //返回另一个玩家的移动
                     if (currentGame.Player1 == username)
                     {
-                        jsonResponse = JsonSerializer.Serialize(new { Player2LastMove = currentGame.Player2LastMove });
+                        otherPlayerMoves = currentGame.Player2LastMove;
                     }
                     else if (currentGame.Player2 == username)
                     {
-                        jsonResponse = JsonSerializer.Serialize(new { Player1LastMove = currentGame.Player1LastMove });
+                        otherPlayerMoves = currentGame.Player1LastMove;
+                    }
+                    else
+                    {
+                        var errorResponse = JsonSerializer.Serialize(new { status = "error", message = "Invalid player." });
+                        response = MakeJsonResponse(errorResponse);
+                        return;
+                    }
+
+                    // 如果对方没有移动
+                    if (otherPlayerMoves.Count == 0)
+                    {
+                        jsonResponse = JsonSerializer.Serialize(new { status = "waiting", message = "Waiting for their move..." });
+                    }
+                    else
+                    {
+                        jsonResponse = JsonSerializer.Serialize(new { moves = otherPlayerMoves });
+
+                        // 清除对方的移动记录，实现回合制
+                        otherPlayerMoves.Clear();
                     }
 
                     response = MakeJsonResponse(jsonResponse);
+
                 }
                 else
                 {
                     //如果当前用户不是Authenticate，返回错误
                     var errorResponse = JsonSerializer.Serialize(new { status = "error", message = "Not your turn." });
                     response = MakeJsonResponse(errorResponse);
+
                 }
             }
             else
@@ -350,12 +495,67 @@ namespace server
                 //如果游戏没有进行或者查不到ID，返回错误
                 var errorResponse = JsonSerializer.Serialize(new { status = "error", message = "Game not in progress or invalid game ID" });
                 response = MakeJsonResponse(errorResponse);
+
             }
 
             // 发送响应
             byte[] responseBytes = Encoding.UTF8.GetBytes(response);
             socket.Send(responseBytes);
+            Console.WriteLine(responseBytes);
+
 
         }
+
+        //处理玩家退出游戏
+        public static void HandleQuitRequest(Socket socket, string username, Guid gameId)
+        {
+            // 找到该用户的游戏记录
+            if (gameList.ContainsKey(gameId))
+            {
+                GameRecord gameToQuit = gameList[gameId];
+                if (gameToQuit.Player1 == username || gameToQuit.Player2 == username)
+                {
+                    // 清除玩家信息并将游戏状态设为等待
+                    if (gameToQuit.Player1 == username)
+                    {
+                        gameToQuit.Player1 = null;
+                    }
+                    else
+                    {
+                        gameToQuit.Player2 = null;
+                    }
+
+                    gameToQuit.GameState = "waiting";
+                    gameToQuit.Authenticate = null;
+
+                    // 发送响应
+                    string jsonResponse = JsonSerializer.Serialize(new { status = "success", message = "Game quit successfully" });
+                    string response = MakeJsonResponse(jsonResponse);
+                    byte[] responseBytes = Encoding.UTF8.GetBytes(response);
+                    socket.Send(responseBytes);
+                }
+                else
+                {
+                    // 如果玩家不是游戏的一部分，返回错误信息
+                    string jsonResponse = JsonSerializer.Serialize(new { status = "error", message = "Player not part of game" });
+                    string response = MakeJsonResponse(jsonResponse);
+                    byte[] responseBytes = Encoding.UTF8.GetBytes(response);
+                    socket.Send(responseBytes);
+                }
+            }
+            else
+            {
+                // 如果游戏记录不存在，返回错误信息
+                string jsonResponse = JsonSerializer.Serialize(new { status = "error", message = "Game not found or already ended" });
+                string response = MakeJsonResponse(jsonResponse);
+                byte[] responseBytes = Encoding.UTF8.GetBytes(response);
+                socket.Send(responseBytes);
+            }
+        }
+
+
+
+
+
     }
 }
