@@ -113,11 +113,6 @@ namespace server
                 return;
             }
 
-            // 建立连接后，立即返回一个确认信息
-            string response = "Connection successfully established!";
-            byte[] data = Encoding.UTF8.GetBytes(response);
-            socket.Send(data);
-
 
             byte[] buffer = new byte[socket.ReceiveBufferSize];
 
