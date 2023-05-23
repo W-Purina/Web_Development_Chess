@@ -1,11 +1,3 @@
-body #Top {
-    text-align: right;
-    font-size: xx-large;
-}
-
-.Hidden {
-    display: none;
-}
 
 .box {
     background-color: rgb(110, 181, 228);
@@ -21,32 +13,39 @@ body #Top {
     background-color: #c6a287;
 }
 
-.login label {
-    color: #000;
-    font-weight: bold;
+#Container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
-.login form {
-    background: #fff;
-    background: rgba(255, 255, 255, 0.6);
-    border-radius: 2px;
-    border: 1px solid #fff;
-}
 
 #Prompt {
     color: #444;
     font-size: 18px;
-    margin: 20px 0;
-    padding: 10px;
+    margin: 10px 0;
+    padding: 5px;
     border: 1px solid #ddd;
     background-color: #f9f9f9;
-}
-.button-container {
-    display: flex;
-    justify-content: space-between;
+    text-align: center;  
+    width: 80%;  
 }
 
-.button-item {
-    flex-grow: 1;
-    text-align: center;
+#Game_of_Chess_body{
+    width: 200;
+    height: 200;
+}
+
+/* 按钮的样式 */
+#game_button button {
+    flex: 1 1 48%;  /* 让按钮能均等地分配空间，并能在需要时折行 */
+    margin: 1%;  /* 让按钮之间有一定的间隔 */
+    font-size: 20px;  /* 字体大小 */
+}
+
+/* 游戏状态信息的样式 */
+#gameStateMessage {
+    text-align: center;  /* 文本居中 */
+    width: 80%;  /* 占据80%的容器宽度 */
 }

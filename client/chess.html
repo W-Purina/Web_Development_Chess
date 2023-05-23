@@ -9,252 +9,279 @@
 
 
 <body>
-        <div id="Game_of_Chess_body" width=500;>
-                <table id="board" style="text-align: center; display: block;">
-                        <tr class="border">
-                                <td width="50"> </td>
-                                <td width="50">a</td>
-                                <td width="50">b</td>
-                                <td width="50">c</td>
-                                <td width="50">d</td>
-                                <td width="50">e</td>
-                                <td width="50">f</td>
-                                <td width="50">g</td>
-                                <td width="50">h</td>
-                                <td ondrop="remove(event)" ondragover="over(event)"><img
-                                                src="https://cws.auckland.ac.nz/gas/images/Bin.svg" draggable="false"
-                                                width="50" /></td>
-                        </tr>
-                        <tr class="box">
-                                <td width="50" class="border">8</td>
-                                <td id="8a" class="square" ondrop="drop(event)" ondragover="over(event)"><img
-                                                id="img-8a" draggable="true" ondragstart="move(event)"
-                                                src="https://cws.auckland.ac.nz/gas/images/Rb.svg" width="50" />
-                                </td>
-                                <td id="8b" ondrop="drop(event)" ondragover="over(event)"><img id="img-8b"
-                                                draggable="true" ondragstart="move(event)"
-                                                src="https://cws.auckland.ac.nz/gas/images/Nb.svg" width="50" />
-                                </td>
-                                <td id="8c" class="square" ondrop="drop(event)" ondragover="over(event)"><img
-                                                id="img-8c" draggable="true" ondragstart="move(event)"
-                                                src=" https://cws.auckland.ac.nz/gas/images/Bb.svg" width="50" /></td>
-                                <td id="8d" ondrop="drop(event)" ondragover="over(event)"><img id="img-8d"
-                                                draggable="true" ondragstart="move(event)"
-                                                src="https://cws.auckland.ac.nz/gas/images/Qb.svg" width="50" />
-                                </td>
-                                <td id="8e" class="square" ondrop="drop(event)" ondragover="over(event)"><img
-                                                id="img-8e" draggable="true" ondragstart="move(event)"
-                                                src=" https://cws.auckland.ac.nz/gas/images/Kb.svg" width="50" /></td>
-                                <td id="8f" ondrop="drop(event)" ondragover="over(event)"><img id="img-8f"
-                                                draggable="true" ondragstart="move(event)"
-                                                src="https://cws.auckland.ac.nz/gas/images/Bb.svg" width="50" />
-                                </td>
-                                <td id="8g" class="square" ondrop="drop(event)" ondragover="over(event)"><img
-                                                id="img-8g" draggable="true" ondragstart="move(event)"
-                                                src=" https://cws.auckland.ac.nz/gas/images/Nb.svg" width="50" /></td>
-                                <td id="8h" ondrop="drop(event)" ondragover="over(event)"><img id="img-8h"
-                                                draggable="true" ondragstart="move(event)"
-                                                src="https://cws.auckland.ac.nz/gas/images/Rb.svg" width="50" />
-                                </td>
-                                <td id="8i" class="border" ondrop="drop(event)" ondragover="over(event)"><img
-                                                id="img-8i" draggable="true" ondragstart="move(event)"
-                                                src="https://cws.auckland.ac.nz/gas/images/Qb.svg" width="50" />
-                                </td>
+        <div id="Container">
+                <div id="Game_of_Chess_body">
+                        <table id="board" style="text-align: center; display: block;">
+                                <tr class="border">
+                                        <td width="50"> </td>
+                                        <td width="50">a</td>
+                                        <td width="50">b</td>
+                                        <td width="50">c</td>
+                                        <td width="50">d</td>
+                                        <td width="50">e</td>
+                                        <td width="50">f</td>
+                                        <td width="50">g</td>
+                                        <td width="50">h</td>
+                                        <td ondrop="remove(event)" ondragover="over(event)"><img
+                                                        src="https://cws.auckland.ac.nz/gas/images/Bin.svg"
+                                                        draggable="false" width="50" /></td>
+                                </tr>
+                                <tr class="box">
+                                        <td width="50" class="border">8</td>
+                                        <td id="8a" class="square" ondrop="drop(event)" ondragover="over(event)"><img
+                                                        id="img-8a" draggable="true" ondragstart="move(event)"
+                                                        src="https://cws.auckland.ac.nz/gas/images/Rb.svg" width="50" />
+                                        </td>
+                                        <td id="8b" ondrop="drop(event)" ondragover="over(event)"><img id="img-8b"
+                                                        draggable="true" ondragstart="move(event)"
+                                                        src="https://cws.auckland.ac.nz/gas/images/Nb.svg" width="50" />
+                                        </td>
+                                        <td id="8c" class="square" ondrop="drop(event)" ondragover="over(event)"><img
+                                                        id="img-8c" draggable="true" ondragstart="move(event)"
+                                                        src=" https://cws.auckland.ac.nz/gas/images/Bb.svg"
+                                                        width="50" /></td>
+                                        <td id="8d" ondrop="drop(event)" ondragover="over(event)"><img id="img-8d"
+                                                        draggable="true" ondragstart="move(event)"
+                                                        src="https://cws.auckland.ac.nz/gas/images/Qb.svg" width="50" />
+                                        </td>
+                                        <td id="8e" class="square" ondrop="drop(event)" ondragover="over(event)"><img
+                                                        id="img-8e" draggable="true" ondragstart="move(event)"
+                                                        src=" https://cws.auckland.ac.nz/gas/images/Kb.svg"
+                                                        width="50" /></td>
+                                        <td id="8f" ondrop="drop(event)" ondragover="over(event)"><img id="img-8f"
+                                                        draggable="true" ondragstart="move(event)"
+                                                        src="https://cws.auckland.ac.nz/gas/images/Bb.svg" width="50" />
+                                        </td>
+                                        <td id="8g" class="square" ondrop="drop(event)" ondragover="over(event)"><img
+                                                        id="img-8g" draggable="true" ondragstart="move(event)"
+                                                        src=" https://cws.auckland.ac.nz/gas/images/Nb.svg"
+                                                        width="50" /></td>
+                                        <td id="8h" ondrop="drop(event)" ondragover="over(event)"><img id="img-8h"
+                                                        draggable="true" ondragstart="move(event)"
+                                                        src="https://cws.auckland.ac.nz/gas/images/Rb.svg" width="50" />
+                                        </td>
+                                        <td id="8i" class="border" ondrop="drop(event)" ondragover="over(event)"><img
+                                                        id="img-8i" draggable="true" ondragstart="move(event)"
+                                                        src="https://cws.auckland.ac.nz/gas/images/Qb.svg" width="50" />
+                                        </td>
 
-                        </tr>
-                        <tr class="box">
-                                <td width="50" class="border">7</td>
-                                <td id="7a" ondrop="drop(event)" ondragover="over(event)"><img id="img-7a"
-                                                draggable="true" ondragstart="move(event)"
-                                                src="https://cws.auckland.ac.nz/gas/images/Pb.svg" width="50" />
-                                </td>
-                                <td id="7b" class="square" ondrop="drop(event)" ondragover="over(event)"><img
-                                                id="img-7b" draggable="true" ondragstart="move(event)"
-                                                src="https://cws.auckland.ac.nz/gas/images/Pb.svg" width="50" />
-                                </td>
-                                <td id="7c" ondrop="drop(event)" ondragover="over(event)"><img id="img-7c"
-                                                draggable="true" ondragstart="move(event)"
-                                                src="https://cws.auckland.ac.nz/gas/images/Pb.svg" width="50" />
-                                </td>
-                                <td id="7d" class="square" ondrop="drop(event)" ondragover="over(event)"><img
-                                                id="img-7d" draggable="true" ondragstart="move(event)"
-                                                src="https://cws.auckland.ac.nz/gas/images/Pb.svg" width="50" />
-                                </td>
-                                <td id="7e" ondrop="drop(event)" ondragover="over(event)"><img id="img-7e"
-                                                draggable="true" ondragstart="move(event)"
-                                                src="https://cws.auckland.ac.nz/gas/images/Pb.svg" width="50" />
-                                </td>
-                                <td id="7f" class="square" ondrop="drop(event)" ondragover="over(event)"><img
-                                                id="img-7f" draggable="true" ondragstart="move(event)"
-                                                src="https://cws.auckland.ac.nz/gas/images/Pb.svg" width="50" />
-                                </td>
-                                <td id="7g" ondrop="drop(event)" ondragover="over(event)"><img id="img-7g"
-                                                draggable="true" ondragstart="move(event)"
-                                                src="https://cws.auckland.ac.nz/gas/images/Pb.svg" width="50" />
-                                </td>
-                                <td id="7h" class="square" ondrop="drop(event)" ondragover="over(event)"><img
-                                                id="img-7h" draggable="true" ondragstart="move(event)"
-                                                src="https://cws.auckland.ac.nz/gas/images/Pb.svg" width="50" />
-                                </td>
-                                <td id="7i" class="border" ondrop="drop(event)" ondragover="over(event)"><img
-                                                id="img-7i" draggable="true" ondragstart="move(event)"
-                                                src="https://cws.auckland.ac.nz/gas/images/Qb.svg" width="50" />
-                                </td>
-                        </tr>
+                                </tr>
+                                <tr class="box">
+                                        <td width="50" class="border">7</td>
+                                        <td id="7a" ondrop="drop(event)" ondragover="over(event)"><img id="img-7a"
+                                                        draggable="true" ondragstart="move(event)"
+                                                        src="https://cws.auckland.ac.nz/gas/images/Pb.svg" width="50" />
+                                        </td>
+                                        <td id="7b" class="square" ondrop="drop(event)" ondragover="over(event)"><img
+                                                        id="img-7b" draggable="true" ondragstart="move(event)"
+                                                        src="https://cws.auckland.ac.nz/gas/images/Pb.svg" width="50" />
+                                        </td>
+                                        <td id="7c" ondrop="drop(event)" ondragover="over(event)"><img id="img-7c"
+                                                        draggable="true" ondragstart="move(event)"
+                                                        src="https://cws.auckland.ac.nz/gas/images/Pb.svg" width="50" />
+                                        </td>
+                                        <td id="7d" class="square" ondrop="drop(event)" ondragover="over(event)"><img
+                                                        id="img-7d" draggable="true" ondragstart="move(event)"
+                                                        src="https://cws.auckland.ac.nz/gas/images/Pb.svg" width="50" />
+                                        </td>
+                                        <td id="7e" ondrop="drop(event)" ondragover="over(event)"><img id="img-7e"
+                                                        draggable="true" ondragstart="move(event)"
+                                                        src="https://cws.auckland.ac.nz/gas/images/Pb.svg" width="50" />
+                                        </td>
+                                        <td id="7f" class="square" ondrop="drop(event)" ondragover="over(event)"><img
+                                                        id="img-7f" draggable="true" ondragstart="move(event)"
+                                                        src="https://cws.auckland.ac.nz/gas/images/Pb.svg" width="50" />
+                                        </td>
+                                        <td id="7g" ondrop="drop(event)" ondragover="over(event)"><img id="img-7g"
+                                                        draggable="true" ondragstart="move(event)"
+                                                        src="https://cws.auckland.ac.nz/gas/images/Pb.svg" width="50" />
+                                        </td>
+                                        <td id="7h" class="square" ondrop="drop(event)" ondragover="over(event)"><img
+                                                        id="img-7h" draggable="true" ondragstart="move(event)"
+                                                        src="https://cws.auckland.ac.nz/gas/images/Pb.svg" width="50" />
+                                        </td>
+                                        <td id="7i" class="border" ondrop="drop(event)" ondragover="over(event)"><img
+                                                        id="img-7i" draggable="true" ondragstart="move(event)"
+                                                        src="https://cws.auckland.ac.nz/gas/images/Qb.svg" width="50" />
+                                        </td>
+                                </tr>
 
-                        <tr class="box">
-                                <td width="50" class="border">6</td>
-                                <td id="6a" width="50" class="square" ondrop="drop(event)" ondragover="over(event)">
-                                </td>
-                                <td id="6b" width="50" ondrop="drop(event)" ondragover="over(event)"></td>
-                                <td id="6c" width="50" class="square" ondrop="drop(event)" ondragover="over(event)">
-                                </td>
-                                <td id="6d" width="50" ondrop="drop(event)" ondragover="over(event)"></td>
-                                <td id="6e" width="50" class="square" ondrop="drop(event)" ondragover="over(event)">
-                                </td>
-                                <td id="6f" width="50" ondrop="drop(event)" ondragover="over(event)"></td>
-                                <td id="6g" width="50" class="square" ondrop="drop(event)" ondragover="over(event)">
-                                </td>
-                                <td id="6h" width="50" ondrop="drop(event)" ondragover="over(event)"></td>
-                                <td id="6i" class="border" ondrop="drop(event)" ondragover="over(event)"><img
-                                                id="img-6i" draggable="true" ondragstart="move(event)"
-                                                src="https://cws.auckland.ac.nz/gas/images/Qb.svg" width="50" />
-                                </td>
-                        </tr>
-                        <tr class="box">
-                                <td width="50" class="border">5</td>
-                                <td id="5a" width="50" ondrop="drop(event)" ondragover="over(event)"></td>
-                                <td id="5b" width="50" class="square" ondrop="drop(event)" ondragover="over(event)">
-                                </td>
-                                <td id="5c" width="50" ondrop="drop(event)" ondragover="over(event)"></td>
-                                <td id="5d" width="50" class="square" ondrop="drop(event)" ondragover="over(event)">
-                                </td>
-                                <td id="5e" width="50" ondrop="drop(event)" ondragover="over(event)"></td>
-                                <td id="5f" width="50" class="square" ondrop="drop(event)" ondragover="over(event)">
-                                </td>
-                                <td id="5g" width="50" ondrop="drop(event)" ondragover="over(event)"></td>
-                                <td id="5h" width="50" class="square" ondrop="drop(event)" ondragover="over(event)">
-                                </td>
-                                <td id="5i" class="border" ondrop="drop(event)" ondragover="over(event)"><img
-                                                id="img-5i" draggable="true" ondragstart="move(event)"
-                                                src="https://cws.auckland.ac.nz/gas/images/Qb.svg" width="50" />
-                                </td>
-                        </tr>
-                        <tr class="box">
-                                <td width="50" class="border">4</td>
-                                <td id="4a" width="50" class="square" ondrop="drop(event)" ondragover="over(event)">
-                                </td>
-                                <td id="4b" width="50" ondrop="drop(event)" ondragover="over(event)"></td>
-                                <td id="4c" width="50" class="square" ondrop="drop(event)" ondragover="over(event)">
-                                </td>
-                                <td id="4d" width="50" ondrop="drop(event)" ondragover="over(event)"></td>
-                                <td id="4e" width="50" class="square" ondrop="drop(event)" ondragover="over(event)">
-                                </td>
-                                <td id="4f" width="50" ondrop="drop(event)" ondragover="over(event)"></td>
-                                <td id="4g" width="50" class="square" ondrop="drop(event)" ondragover="over(event)">
-                                </td>
-                                <td id="4h" width="50" ondrop="drop(event)" ondragover="over(event)"></td>
-                                <td id="4i" class="border" ondrop="drop(event)" ondragover="over(event)"><img
-                                                id="img-4i" src="https://cws.auckland.ac.nz/gas/images/Qw.svg"
-                                                ondragstart="move(event)" draggable="true" width="50" /></td>
-                        </tr>
-                        <tr class="box">
-                                <td width="50" class="border">3</td>
-                                <td id="3a" width="50" ondrop="drop(event)" ondragover="over(event)"></td>
-                                <td id="3b" width="50" class="square" ondrop="drop(event)" ondragover="over(event)">
-                                </td>
-                                <td id="3c" width="50" ondrop="drop(event)" ondragover="over(event)"></td>
-                                <td id="3d" width="50" class="square" ondrop="drop(event)" ondragover="over(event)">
-                                </td>
-                                <td id="3e" width="50" ondrop="drop(event)" ondragover="over(event)"></td>
-                                <td id="3f" width="50" class="square" ondrop="drop(event)" ondragover="over(event)">
-                                </td>
-                                <td id="3g" width="50" ondrop="drop(event)" ondragover="over(event)"></td>
-                                <td id="3h" width="50" class="square" ondrop="drop(event)" ondragover="over(event)">
-                                </td>
-                                <td id="3i" class="border" ondrop="drop(event)" ondragover="over(event)"><img
-                                                id="img-3i" src="https://cws.auckland.ac.nz/gas/images/Qw.svg"
-                                                ondragstart="move(event)" draggable="true" width="50" /></td>
-                        </tr>
-                        <tr class="box">
-                                <td width="50" class="border">2</td>
-                                <td id="2a" class="square" ondrop="drop(event)" ondragover="over(event)"><img
-                                                id="img-2a" ondragstart="move(event)"
-                                                src="https://cws.auckland.ac.nz/gas/images/Pw.svg" draggable="true"
-                                                width="50" /></td>
-                                <td id="2b" ondrop="drop(event)" ondragover="over(event)"><img id="img-2b"
-                                                src="https://cws.auckland.ac.nz/gas/images/Pw.svg"
-                                                ondragstart="move(event)" draggable="true" width="50" /></td>
-                                <td id="2c" class="square" ondrop="drop(event)" ondragover="over(event)"><img
-                                                id="img-2c" ondragstart="move(event)"
-                                                src="https://cws.auckland.ac.nz/gas/images/Pw.svg" draggable="true"
-                                                ondragstart="move(event)" width="50" /></td>
-                                <td id="2d" ondrop="drop(event)" ondragover="over(event)"><img id="img-2d"
-                                                src="https://cws.auckland.ac.nz/gas/images/Pw.svg"
-                                                ondragstart="move(event)" draggable="true" width="50" /></td>
-                                <td id="2e" class="square" ondrop="drop(event)" ondragover="over(event)"><img
-                                                id="img-2e" src="https://cws.auckland.ac.nz/gas/images/Pw.svg"
-                                                draggable="true" ondragstart="move(event)" width="50" /></td>
-                                <td id="2f" ondrop="drop(event)" ondragover="over(event)"><img id="img-2f"
-                                                src="https://cws.auckland.ac.nz/gas/images/Pw.svg"
-                                                ondragstart="move(event)" draggable="true" width="50" /></td>
-                                <td id="2g" class="square" ondrop="drop(event)" ondragover="over(event)"><img
-                                                id="img-2g" src="https://cws.auckland.ac.nz/gas/images/Pw.svg"
-                                                draggable="true" ondragstart="move(event)" width="50" /></td>
-                                <td id="2h" ondrop="drop(event)" ondragover="over(event)"><img id="img-2h"
-                                                src="https://cws.auckland.ac.nz/gas/images/Pw.svg"
-                                                ondragstart="move(event)" draggable="true" width="50" /></td>
-                                <td id="2i" class="border" ondrop="drop(event)" ondragover="over(event)"><img
-                                                id="img-2i" src="https://cws.auckland.ac.nz/gas/images/Qw.svg"
-                                                ondragstart="move(event)" draggable="true" width="50" /></td>
-                        </tr>
-                        <tr class="box">
-                                <td width="50" class="border">1</td>
-                                <td id="1a" ondrop="drop(event)" ondragover="over(event)"><img id="img-1a"
-                                                src="https://cws.auckland.ac.nz/gas/images/Rw.svg"
-                                                ondragstart="move(event)" draggable="true" width="50" /></td>
-                                <td id="1b" class="square" ondrop="drop(event)" ondragover="over(event)"><img
-                                                id="img-1b" src="https://cws.auckland.ac.nz/gas/images/Nw.svg"
-                                                draggable="true" ondragstart="move(event)" width="50" /></td>
-                                <td id="1c" ondrop="drop(event)" ondragover="over(event)"><img id="img-1c"
-                                                src="https://cws.auckland.ac.nz/gas/images/Bw.svg"
-                                                ondragstart="move(event)" draggable="true" width="50" /></td>
-                                <td id="1d" class="square" ondrop="drop(event)" ondragover="over(event)"><img
-                                                id="img-1d" src="https://cws.auckland.ac.nz/gas/images/Qw.svg"
-                                                draggable="true" ondragstart="move(event)" width="50" /></td>
-                                <td id="1e" ondrop="drop(event)" ondragover="over(event)"><img id="img-1e"
-                                                src="https://cws.auckland.ac.nz/gas/images/Kw.svg"
-                                                ondragstart="move(event)" draggable="true" width="50" /></td>
-                                <td id="1f" class="square" ondrop="drop(event)" ondragover="over(event)"><img
-                                                id="img-1f" src="https://cws.auckland.ac.nz/gas/images/Bw.svg"
-                                                draggable="true" ondragstart="move(event)" width="50" /></td>
-                                <td id="1g" ondrop="drop(event)" ondragover="over(event)"><img id="img-1g"
-                                                src="https://cws.auckland.ac.nz/gas/images/Nw.svg"
-                                                ondragstart="move(event)" draggable="true" width="50" /></td>
-                                <td id="1h" class="square" ondrop="drop(event)" ondragover="over(event)"><img
-                                                id="img-1h" src="https://cws.auckland.ac.nz/gas/images/Rw.svg"
-                                                draggable="true" ondragstart="move(event)" width="50" /></td>
-                                <td id="1i" class="border" ondrop="drop(event)" ondragover="over(event)"><img
-                                                id="img-1i" src="https://cws.auckland.ac.nz/gas/images/Qw.svg"
-                                                draggable="true" ondragstart="move(event)" width="50" /></td>
+                                <tr class="box">
+                                        <td width="50" class="border">6</td>
+                                        <td id="6a" width="50" class="square" ondrop="drop(event)"
+                                                ondragover="over(event)">
+                                        </td>
+                                        <td id="6b" width="50" ondrop="drop(event)" ondragover="over(event)"></td>
+                                        <td id="6c" width="50" class="square" ondrop="drop(event)"
+                                                ondragover="over(event)">
+                                        </td>
+                                        <td id="6d" width="50" ondrop="drop(event)" ondragover="over(event)"></td>
+                                        <td id="6e" width="50" class="square" ondrop="drop(event)"
+                                                ondragover="over(event)">
+                                        </td>
+                                        <td id="6f" width="50" ondrop="drop(event)" ondragover="over(event)"></td>
+                                        <td id="6g" width="50" class="square" ondrop="drop(event)"
+                                                ondragover="over(event)">
+                                        </td>
+                                        <td id="6h" width="50" ondrop="drop(event)" ondragover="over(event)"></td>
+                                        <td id="6i" class="border" ondrop="drop(event)" ondragover="over(event)"><img
+                                                        id="img-6i" draggable="true" ondragstart="move(event)"
+                                                        src="https://cws.auckland.ac.nz/gas/images/Qb.svg" width="50" />
+                                        </td>
+                                </tr>
+                                <tr class="box">
+                                        <td width="50" class="border">5</td>
+                                        <td id="5a" width="50" ondrop="drop(event)" ondragover="over(event)"></td>
+                                        <td id="5b" width="50" class="square" ondrop="drop(event)"
+                                                ondragover="over(event)">
+                                        </td>
+                                        <td id="5c" width="50" ondrop="drop(event)" ondragover="over(event)"></td>
+                                        <td id="5d" width="50" class="square" ondrop="drop(event)"
+                                                ondragover="over(event)">
+                                        </td>
+                                        <td id="5e" width="50" ondrop="drop(event)" ondragover="over(event)"></td>
+                                        <td id="5f" width="50" class="square" ondrop="drop(event)"
+                                                ondragover="over(event)">
+                                        </td>
+                                        <td id="5g" width="50" ondrop="drop(event)" ondragover="over(event)"></td>
+                                        <td id="5h" width="50" class="square" ondrop="drop(event)"
+                                                ondragover="over(event)">
+                                        </td>
+                                        <td id="5i" class="border" ondrop="drop(event)" ondragover="over(event)"><img
+                                                        id="img-5i" draggable="true" ondragstart="move(event)"
+                                                        src="https://cws.auckland.ac.nz/gas/images/Qb.svg" width="50" />
+                                        </td>
+                                </tr>
+                                <tr class="box">
+                                        <td width="50" class="border">4</td>
+                                        <td id="4a" width="50" class="square" ondrop="drop(event)"
+                                                ondragover="over(event)">
+                                        </td>
+                                        <td id="4b" width="50" ondrop="drop(event)" ondragover="over(event)"></td>
+                                        <td id="4c" width="50" class="square" ondrop="drop(event)"
+                                                ondragover="over(event)">
+                                        </td>
+                                        <td id="4d" width="50" ondrop="drop(event)" ondragover="over(event)"></td>
+                                        <td id="4e" width="50" class="square" ondrop="drop(event)"
+                                                ondragover="over(event)">
+                                        </td>
+                                        <td id="4f" width="50" ondrop="drop(event)" ondragover="over(event)"></td>
+                                        <td id="4g" width="50" class="square" ondrop="drop(event)"
+                                                ondragover="over(event)">
+                                        </td>
+                                        <td id="4h" width="50" ondrop="drop(event)" ondragover="over(event)"></td>
+                                        <td id="4i" class="border" ondrop="drop(event)" ondragover="over(event)"><img
+                                                        id="img-4i" src="https://cws.auckland.ac.nz/gas/images/Qw.svg"
+                                                        ondragstart="move(event)" draggable="true" width="50" /></td>
+                                </tr>
+                                <tr class="box">
+                                        <td width="50" class="border">3</td>
+                                        <td id="3a" width="50" ondrop="drop(event)" ondragover="over(event)"></td>
+                                        <td id="3b" width="50" class="square" ondrop="drop(event)"
+                                                ondragover="over(event)">
+                                        </td>
+                                        <td id="3c" width="50" ondrop="drop(event)" ondragover="over(event)"></td>
+                                        <td id="3d" width="50" class="square" ondrop="drop(event)"
+                                                ondragover="over(event)">
+                                        </td>
+                                        <td id="3e" width="50" ondrop="drop(event)" ondragover="over(event)"></td>
+                                        <td id="3f" width="50" class="square" ondrop="drop(event)"
+                                                ondragover="over(event)">
+                                        </td>
+                                        <td id="3g" width="50" ondrop="drop(event)" ondragover="over(event)"></td>
+                                        <td id="3h" width="50" class="square" ondrop="drop(event)"
+                                                ondragover="over(event)">
+                                        </td>
+                                        <td id="3i" class="border" ondrop="drop(event)" ondragover="over(event)"><img
+                                                        id="img-3i" src="https://cws.auckland.ac.nz/gas/images/Qw.svg"
+                                                        ondragstart="move(event)" draggable="true" width="50" /></td>
+                                </tr>
+                                <tr class="box">
+                                        <td width="50" class="border">2</td>
+                                        <td id="2a" class="square" ondrop="drop(event)" ondragover="over(event)"><img
+                                                        id="img-2a" ondragstart="move(event)"
+                                                        src="https://cws.auckland.ac.nz/gas/images/Pw.svg"
+                                                        draggable="true" width="50" /></td>
+                                        <td id="2b" ondrop="drop(event)" ondragover="over(event)"><img id="img-2b"
+                                                        src="https://cws.auckland.ac.nz/gas/images/Pw.svg"
+                                                        ondragstart="move(event)" draggable="true" width="50" /></td>
+                                        <td id="2c" class="square" ondrop="drop(event)" ondragover="over(event)"><img
+                                                        id="img-2c" ondragstart="move(event)"
+                                                        src="https://cws.auckland.ac.nz/gas/images/Pw.svg"
+                                                        draggable="true" ondragstart="move(event)" width="50" /></td>
+                                        <td id="2d" ondrop="drop(event)" ondragover="over(event)"><img id="img-2d"
+                                                        src="https://cws.auckland.ac.nz/gas/images/Pw.svg"
+                                                        ondragstart="move(event)" draggable="true" width="50" /></td>
+                                        <td id="2e" class="square" ondrop="drop(event)" ondragover="over(event)"><img
+                                                        id="img-2e" src="https://cws.auckland.ac.nz/gas/images/Pw.svg"
+                                                        draggable="true" ondragstart="move(event)" width="50" /></td>
+                                        <td id="2f" ondrop="drop(event)" ondragover="over(event)"><img id="img-2f"
+                                                        src="https://cws.auckland.ac.nz/gas/images/Pw.svg"
+                                                        ondragstart="move(event)" draggable="true" width="50" /></td>
+                                        <td id="2g" class="square" ondrop="drop(event)" ondragover="over(event)"><img
+                                                        id="img-2g" src="https://cws.auckland.ac.nz/gas/images/Pw.svg"
+                                                        draggable="true" ondragstart="move(event)" width="50" /></td>
+                                        <td id="2h" ondrop="drop(event)" ondragover="over(event)"><img id="img-2h"
+                                                        src="https://cws.auckland.ac.nz/gas/images/Pw.svg"
+                                                        ondragstart="move(event)" draggable="true" width="50" /></td>
+                                        <td id="2i" class="border" ondrop="drop(event)" ondragover="over(event)"><img
+                                                        id="img-2i" src="https://cws.auckland.ac.nz/gas/images/Qw.svg"
+                                                        ondragstart="move(event)" draggable="true" width="50" /></td>
+                                </tr>
+                                <tr class="box">
+                                        <td width="50" class="border">1</td>
+                                        <td id="1a" ondrop="drop(event)" ondragover="over(event)"><img id="img-1a"
+                                                        src="https://cws.auckland.ac.nz/gas/images/Rw.svg"
+                                                        ondragstart="move(event)" draggable="true" width="50" /></td>
+                                        <td id="1b" class="square" ondrop="drop(event)" ondragover="over(event)"><img
+                                                        id="img-1b" src="https://cws.auckland.ac.nz/gas/images/Nw.svg"
+                                                        draggable="true" ondragstart="move(event)" width="50" /></td>
+                                        <td id="1c" ondrop="drop(event)" ondragover="over(event)"><img id="img-1c"
+                                                        src="https://cws.auckland.ac.nz/gas/images/Bw.svg"
+                                                        ondragstart="move(event)" draggable="true" width="50" /></td>
+                                        <td id="1d" class="square" ondrop="drop(event)" ondragover="over(event)"><img
+                                                        id="img-1d" src="https://cws.auckland.ac.nz/gas/images/Qw.svg"
+                                                        draggable="true" ondragstart="move(event)" width="50" /></td>
+                                        <td id="1e" ondrop="drop(event)" ondragover="over(event)"><img id="img-1e"
+                                                        src="https://cws.auckland.ac.nz/gas/images/Kw.svg"
+                                                        ondragstart="move(event)" draggable="true" width="50" /></td>
+                                        <td id="1f" class="square" ondrop="drop(event)" ondragover="over(event)"><img
+                                                        id="img-1f" src="https://cws.auckland.ac.nz/gas/images/Bw.svg"
+                                                        draggable="true" ondragstart="move(event)" width="50" /></td>
+                                        <td id="1g" ondrop="drop(event)" ondragover="over(event)"><img id="img-1g"
+                                                        src="https://cws.auckland.ac.nz/gas/images/Nw.svg"
+                                                        ondragstart="move(event)" draggable="true" width="50" /></td>
+                                        <td id="1h" class="square" ondrop="drop(event)" ondragover="over(event)"><img
+                                                        id="img-1h" src="https://cws.auckland.ac.nz/gas/images/Rw.svg"
+                                                        draggable="true" ondragstart="move(event)" width="50" /></td>
+                                        <td id="1i" class="border" ondrop="drop(event)" ondragover="over(event)"><img
+                                                        id="img-1i" src="https://cws.auckland.ac.nz/gas/images/Qw.svg"
+                                                        draggable="true" ondragstart="move(event)" width="50" /></td>
 
-                        </tr>
-                        <tr class="border">
-                                <td><img draggable="false" width="50" ondrop="remove(event)" ondragover="over(event)"
-                                                src="https://cws.auckland.ac.nz/gas/images/Bin.svg">
-                                </td>
-                                <td width="50">a</td>
-                                <td width="50">b</td>
-                                <td width="50">c</td>
-                                <td width="50">d</td>
-                                <td width="50">e</td>
-                                <td width="50">f</td>
-                                <td width="50">g</td>
-                                <td width="50">h</td>
-                                <td width="50"></td>
-                        </tr>
-                </table>
+                                </tr>
+                                <tr class="border">
+                                        <td><img draggable="false" width="50" ondrop="remove(event)"
+                                                        ondragover="over(event)"
+                                                        src="https://cws.auckland.ac.nz/gas/images/Bin.svg">
+                                        </td>
+                                        <td width="50">a</td>
+                                        <td width="50">b</td>
+                                        <td width="50">c</td>
+                                        <td width="50">d</td>
+                                        <td width="50">e</td>
+                                        <td width="50">f</td>
+                                        <td width="50">g</td>
+                                        <td width="50">h</td>
+                                        <td width="50"></td>
+                                </tr>
+                        </table>
+                </div>
                 <div id="Prompt">
+                        <p>To play, You need a vaild username.This needs to be obtained from
+                                http://localhost:8000/register.
+                                User this username for the entire play session.</p>
+
+                        <p>A piece moved to a bin cannot be recovered.</p>
 
                 </div>
                 <div id="game_button">
@@ -287,4 +314,5 @@
                 </div>
                 <p id="gameStateMessage"></p>
         </div>
+
 </body>
