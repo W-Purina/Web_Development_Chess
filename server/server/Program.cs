@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.X86;
 using System.Text;
 using System.Text.Json;
@@ -101,6 +102,17 @@ namespace server
             //结束接收连接请求，返回新的socket用于和客户端通信
             Socket socket = _SeverSocket.EndAccept(AR);
 
+            try
+            {
+                socket = _SeverSocket.EndAccept(AR);
+                Console.WriteLine($"Connection established with {socket.RemoteEndPoint}");
+            }
+            catch (ObjectDisposedException)
+            {
+                // 当服务器关闭时，忽略这个异常
+                return;
+            }
+
             byte[] buffer = new byte[socket.ReceiveBufferSize];
 
             //接收来自客户端的数据
@@ -113,6 +125,7 @@ namespace server
             ///register端点的
             if (request.StartsWith("GET /register"))
             {
+                Console.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId} sent response to  {socket.RemoteEndPoint}  for /register");
                 HandleRegisterRequest(socket);
             }
 
@@ -135,6 +148,8 @@ namespace server
                 var requestUri = new Uri("http://localhost:8000" + request.Split(' ')[1]);
                 var queryParameters = HttpUtility.ParseQueryString(requestUri.Query);
                 var username = queryParameters.Get("player");
+
+                Console.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId} send response to {socket.RemoteEndPoint}  for /pairme?player={username} ");
                 HandlePairMeRequest(socket, username);
             }
 
@@ -145,7 +160,6 @@ namespace server
                 var requestUri = new Uri("http://localhost:8000" + request.Split(' ')[1]);
                 var queryParameters = HttpUtility.ParseQueryString(requestUri.Query);
                 var username = queryParameters.Get("player");
-                Console.WriteLine(username + " requested game state");
                 HandleGameStateRequest(socket, username);
             }
 
@@ -164,6 +178,8 @@ namespace server
                 Guid id;
                 if (!string.IsNullOrEmpty(idString) && Guid.TryParse(idString, out id))
                 {
+                    Console.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId} send response to {socket.RemoteEndPoint}  for /mymove?player={player}&id={idString}&move={move}");
+
                     // id 参数有效，可以使用 id 进行后续操作
                     HandleMyMoveRequest(socket, player, id, move);
                 }
@@ -187,6 +203,7 @@ namespace server
                 Guid id;
                 if (!string.IsNullOrEmpty(idString) && Guid.TryParse(idString, out id))
                 {
+                    Console.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId} send response to {socket.RemoteEndPoint}  for /theirmove?player={player}&id={idString}");
                     // id 参数有效，可以使用 id 进行后续操作
                     HandleTheirMoveRequest(socket, player, id);
                 }
@@ -211,6 +228,7 @@ namespace server
                 Guid id;
                 if (!string.IsNullOrEmpty(idString) && Guid.TryParse(idString, out id))
                 {
+                    Console.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId} closing connection with {socket.RemoteEndPoint} and terminating");
                     // id 参数有效，可以使用 id 进行后续操作
                     HandleQuitRequest(socket, player, id);
                 }
@@ -501,8 +519,6 @@ namespace server
             // 发送响应
             byte[] responseBytes = Encoding.UTF8.GetBytes(response);
             socket.Send(responseBytes);
-            Console.WriteLine(responseBytes);
-
 
         }
 

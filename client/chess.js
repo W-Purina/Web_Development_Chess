@@ -3,7 +3,15 @@ let moveHistory = [];
 let piecePositions = {};
 let moveRecord = {};
 
+// 在开始时，设置锁为false
+let isGameActive = false;
 const move = (event) => {
+
+    // 如果锁是false，就返回并不执行后续的代码
+    if (!isGameActive) {
+        return;
+    }
+
     // 在开始拖动时，记录棋子的初始位置
     const piece = event.target.id;
     const position = event.target.parentElement.id;
@@ -102,6 +110,8 @@ const Pair_player = (username) => {
                 window.alert("You have alread in the line");
             }
             else if (gameRecord.GameState === "progress") {
+                // 在匹配到对手之后，将锁设为true
+                isGameActive = true;
                 window.alert(gameRecord.Player1 + " is playing with " + gameRecord.Player2);
             }
         })
@@ -128,6 +138,7 @@ const checkGameState = (username) => {
             if (gameRecord.GameState === "wait") {
                 messageElement.innerText = "Waiting for another player to join...";
             } else if (gameRecord.GameState === "progress") {
+                isGameActive = true;
                 document.getElementById('Pair_player').style.display = 'none';
                 if (gameRecord.Player1 != currentUser) {
                     document.getElementById('Send_my_move').style.display = 'none';
@@ -211,8 +222,11 @@ const Get_their_move = () => {
                 });
             }
             // 如果对手还未进行移动，显示提示信息
-            else if (gameRecord.message === "Game not in progress") {
-                document.getElementById('their_last_move').textContent = "Waiting for their move...";
+            else if (gameRecord.message === "Game not in progress or invalid game ID") {
+                document.getElementById('gameStateMessage').textContent = "You opponent has quit the game";
+            }
+            else if(gameRecord.message == "Not your turn."){
+                document.getElementById('gameStateMessage').textContent = "You opponent hasn't move yet";
             }
             else {
                 console.log(gameRecord.message);
@@ -251,6 +265,7 @@ const Quit_Game = () => {
         })
         .then(data => {
             if (data.status === 'success') {
+                isGameActive = false;
                 document.getElementById('Try_Game').style.display = 'block';
                 document.getElementById('Pair_player').style.display = 'none';
                 document.getElementById('Send_my_move').style.display = 'none';
@@ -265,12 +280,10 @@ const Quit_Game = () => {
         })
         .catch(error => {
             console.log(error);
-            window.alert("You haven't join in a game");
         });
 };
 
 //记录棋子的初始位置-用于退出重置棋盘
-// 映射棋子的id到他们的初始位置
 const pieceInitialPositionMap = {
     "img-1a": "1a", "img-1b": "1b", "img-1c": "1c", "img-1d": "1d", "img-1e": "1e", "img-1f": "1f", "img-1g": "1g", "img-1h": "1h", "img-1i": "1i",
     "img-2a": "2a", "img-2b": "2b", "img-2c": "2c", "img-2d": "2d", "img-2e": "2e", "img-2f": "2f", "img-2g": "2g", "img-2h": "2h", "img-2i": "2i",
@@ -282,12 +295,56 @@ const pieceInitialPositionMap = {
     "img-8a": "8a", "img-8b": "8b", "img-8c": "8c", "img-8d": "8d", "img-8e": "8e", "img-8f": "8f", "img-8g": "8g", "img-8h": "8h", "img-8i": "8i",
 };
 
+// 这个对象将棋子ID映射到棋子的图片URL
+const pieceIdToImageUrlMap = {
+    "img-1a": "https://cws.auckland.ac.nz/gas/images/Rw.svg",
+    "img-1b": "https://cws.auckland.ac.nz/gas/images/Nw.svg",
+    "img-1c": "https://cws.auckland.ac.nz/gas/images/Bw.svg",
+    "img-1d": "https://cws.auckland.ac.nz/gas/images/Qw.svg",
+    "img-1e": "https://cws.auckland.ac.nz/gas/images/Kw.svg",
+    "img-1f": "https://cws.auckland.ac.nz/gas/images/Bw.svg",
+    "img-1g": "https://cws.auckland.ac.nz/gas/images/Nw.svg",
+    "img-1h": "https://cws.auckland.ac.nz/gas/images/Rw.svg",
+    "img-1i": "https://cws.auckland.ac.nz/gas/images/Qw.svg",
+    "img-2a": "https://cws.auckland.ac.nz/gas/images/Pw.svg",
+    "img-2b": "https://cws.auckland.ac.nz/gas/images/Pw.svg",
+    "img-2c": "https://cws.auckland.ac.nz/gas/images/Pw.svg",
+    "img-2d": "https://cws.auckland.ac.nz/gas/images/Pw.svg",
+    "img-2e": "https://cws.auckland.ac.nz/gas/images/Pw.svg",
+    "img-2f": "https://cws.auckland.ac.nz/gas/images/Pw.svg",
+    "img-2g": "https://cws.auckland.ac.nz/gas/images/Pw.svg",
+    "img-2h": "https://cws.auckland.ac.nz/gas/images/Pw.svg",
+    "img-2i": "https://cws.auckland.ac.nz/gas/images/Qw.svg",
+    "img-3i": "https://cws.auckland.ac.nz/gas/images/Qw.svg",
+    "img-4i": "https://cws.auckland.ac.nz/gas/images/Qw.svg",
+    "img-5i": "https://cws.auckland.ac.nz/gas/images/Qb.svg",
+    "img-6i": "https://cws.auckland.ac.nz/gas/images/Qb.svg",
+    "img-7a": "https://cws.auckland.ac.nz/gas/images/Pb.svg",
+    "img-7b": "https://cws.auckland.ac.nz/gas/images/Pb.svg",
+    "img-7c": "https://cws.auckland.ac.nz/gas/images/Pb.svg",
+    "img-7d": "https://cws.auckland.ac.nz/gas/images/Pb.svg",
+    "img-7e": "https://cws.auckland.ac.nz/gas/images/Pb.svg",
+    "img-7f": "https://cws.auckland.ac.nz/gas/images/Pb.svg",
+    "img-7g": "https://cws.auckland.ac.nz/gas/images/Pb.svg",
+    "img-7h": "https://cws.auckland.ac.nz/gas/images/Pb.svg",
+    "img-7i": "https://cws.auckland.ac.nz/gas/images/Qb.svg",
+    "img-8a": "https://cws.auckland.ac.nz/gas/images/Rb.svg",
+    "img-8b": "https://cws.auckland.ac.nz/gas/images/Nb.svg",
+    "img-8c": "https://cws.auckland.ac.nz/gas/images/Bb.svg",
+    "img-8d": "https://cws.auckland.ac.nz/gas/images/Qb.svg",
+    "img-8e": "https://cws.auckland.ac.nz/gas/images/Kb.svg",
+    "img-8f": "https://cws.auckland.ac.nz/gas/images/Bb.svg",
+    "img-8g": "https://cws.auckland.ac.nz/gas/images/Nb.svg",
+    "img-8h": "https://cws.auckland.ac.nz/gas/images/Rb.svg",
+    "img-8i": "https://cws.auckland.ac.nz/gas/images/Qb.svg"
+};
+
 
 // 重置棋盘
 const resetBoard = () => {
     // 遍历棋盘上的所有位置
-    for (let i = 1; i <= 9; i++) {
-        for (let j = 0; j < 9; j++) {
+    for (let i = 1; i <= 8; i++) {
+        for (let j = 0; j < 8; j++) {
             let positionId = `${i}${String.fromCharCode(97 + j)}`;
             let positionElement = document.getElementById(positionId);
             // 清除该位置上的棋子
@@ -298,8 +355,11 @@ const resetBoard = () => {
     // 重新创建棋子并将他们放到他们的初始位置
     for (let pieceId in pieceInitialPositionMap) {
         let initialPositionId = pieceInitialPositionMap[pieceId];
+        console.log(initialPositionId);
         let positionElement = document.getElementById(initialPositionId);
-        positionElement.innerHTML = `<img id="${pieceId}" src="https://cws.auckland.ac.nz/gas/images/${pieceId.substring(4)}.svg" ondragstart="move(event)" draggable="true" width="50" />`;
+        // 用pieceIdToImageUrlMap来获取棋子的图片URL
+        let imageUrl = pieceIdToImageUrlMap[pieceId];
+        positionElement.innerHTML = `<img id="${pieceId}" src="${imageUrl}" ondragstart="move(event)" draggable="true" width="50" />`;
     }
 
     // 清空移动历史记录
