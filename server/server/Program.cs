@@ -61,9 +61,6 @@ namespace server
 
     public class Program
     {
-        //创建一个sockert实例，实例作为服务器servre
-        private static Socket _SeverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        private static int counter = 0;
         private static GameRecord currentGame = null;
 
         // 将gameList设为一个字典
@@ -78,77 +75,89 @@ namespace server
         };
         private static HashSet<string> registeredUsers = new HashSet<string>();
 
-        static void Main()
+        static async Task Main(string[] args)
         {
             Console.WriteLine("Setting up server ...");
+
+
             //绑定socket到任意的可用IP地址和8000端口上
-            _SeverSocket.Bind(new IPEndPoint(IPAddress.Any, 8000));
+            var listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            listener.Bind(new IPEndPoint(IPAddress.Any, 8000));
 
-            //让sokcet开始监听这个端口的链接请求，让队列中最多可以有10个待处理的请求
-            _SeverSocket.Listen(10);
+            //让sokcet开始监听这个端口的链接请求，让队列中最多可以有100个待处理的请求
+            listener.Listen(100);
 
-            //异步接受链接请求
-            _SeverSocket.BeginAccept(new AsyncCallback(AcceptCallback), null);
             Console.WriteLine("Sever is listening http://localhost:8000");
 
-            //阻塞主线程，防止应用程序立即关闭
-            while (true) { }
-
-        }
-
-        //处理线程
-        private static void AcceptCallback(IAsyncResult AR)
-        {
-            //结束接收连接请求，返回新的socket用于和客户端通信
-            Socket socket = _SeverSocket.EndAccept(AR);
-
-            try
+            while (true)
             {
-                socket = _SeverSocket.EndAccept(AR);
-                Console.WriteLine($"Connection established with {socket.RemoteEndPoint}");
+                var socket = listener.Accept();
+
+                // 向客户端发送一个确认连接的消息，这里发送了一个换行符
+                string response = "\r\n";
+                byte[] responseBytes = Encoding.UTF8.GetBytes(response);
+                socket.Send(responseBytes);
+
+                Task.Run(async() => HandleRequest(socket));
 
             }
-            catch (ObjectDisposedException)
-            {
-                // 当服务器关闭时，忽略这个异常
-                return;
-            }
 
-            // 开始接收下一个连接请求
-            _SeverSocket.BeginAccept(new AsyncCallback(AcceptCallback), null);
-
-            // 创建新的任务来处理这个连接
-            Task.Run(() => HandleRequest(socket));
         }
-
+   
         //处理请求
         private static void HandleRequest(Socket socket)
         {
-            // 保持接收数据直到客户端关闭连接
-            while (true)
+            try
             {
-                byte[] buffer = new byte[socket.ReceiveBufferSize];
+                StringBuilder request = new StringBuilder();
+                byte[] buffer = new byte[1024];
 
-                //接收来自客户端的数据
-                int received = socket.Receive(buffer, SocketFlags.None);
-                if (received <= 0) break;  // 如果没有接收到数据，那么客户端可能已经关闭了连接
+                // 保持接收数据直到客户端关闭连接
+                while (true)
+                {
+                    int bytesRead = socket.Receive(buffer);
+                    request.Append(Encoding.ASCII.GetString(buffer, 0, bytesRead));
 
-                //将接收到的字节转换成字符串
-                string request = Encoding.UTF8.GetString(buffer, 0, received);
+                    if (request.ToString().EndsWith("\r\n\r\n"))
+                    {
+                        break;
+                    }        
+                }
+
+                //把传来的request作转字符串处理
+                string requestString = request.ToString();
+                var requestLines = requestString.Split('\n');
+                if (requestLines.Length == 0)
+                {
+                    Console.WriteLine("No request lines received.");
+                    return;
+                }
+
+                var requestLine = requestLines[0].Split(" ");
+                if(requestLine.Length < 2)
+                {
+                    Console.WriteLine("The request line does not contain enough elements.");
+                    return;
+                }
+
+                //获取url
+                string url = requestLine[1];
 
                 // 处理请求
                 ///register端点的
-                if (request.StartsWith("GET /register"))
+                
+                if (url.StartsWith("/register"))
                 {
                     Console.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId} sent response to  {socket.RemoteEndPoint}  for /register");
-                    HandleRegisterRequest(socket);
+                    HandleRegisterRequest(socket);              
+
                 }
 
                 //请求进入游戏
-                else if (request.StartsWith("GET /trygame"))
+                else if (url.StartsWith("/trygame"))
                 {
                     // 从请求中获取用户名
-                    var requestUri = new Uri("http://localhost:8000" + request.Split(' ')[1]);
+                    var requestUri = new Uri("http://localhost:8000" + request.ToString().Split(' ')[1]);
                     var queryParameters = HttpUtility.ParseQueryString(requestUri.Query);
                     var username = queryParameters.Get("username");
 
@@ -157,10 +166,10 @@ namespace server
                 }
 
                 //请求/pairme端点
-                else if (request.StartsWith("GET /pairme"))
+                else if (url.StartsWith("/pairme"))
                 {
                     //从请求中获取用户名
-                    var requestUri = new Uri("http://localhost:8000" + request.Split(' ')[1]);
+                    var requestUri = new Uri("http://localhost:8000" + request.ToString().Split(' ')[1]);
                     var queryParameters = HttpUtility.ParseQueryString(requestUri.Query);
                     var username = queryParameters.Get("player");
 
@@ -169,20 +178,20 @@ namespace server
                 }
 
                 //请求/gamestate端点
-                else if (request.StartsWith("GET /gamestate"))
+                else if (url.StartsWith("/gamestate"))
                 {
                     //获取用户名
-                    var requestUri = new Uri("http://localhost:8000" + request.Split(' ')[1]);
+                    var requestUri = new Uri("http://localhost:8000" + request.ToString().Split(' ')[1]);
                     var queryParameters = HttpUtility.ParseQueryString(requestUri.Query);
                     var username = queryParameters.Get("player");
                     HandleGameStateRequest(socket, username);
                 }
 
                 //请求/mymove端点
-                else if (request.StartsWith("GET /mymove"))
+                else if (url.StartsWith("/mymove"))
                 {
                     //解析URL的参数
-                    var uri = new Uri("http://localhost" + request.Split(' ')[1]);
+                    var uri = new Uri("http://localhost" + request.ToString().Split(' ')[1]);
                     var query = HttpUtility.ParseQueryString(uri.Query);
 
 
@@ -206,10 +215,10 @@ namespace server
                 }
 
                 //请求/GetTheirMove端点
-                else if (request.StartsWith("GET /theirmove"))
+                else if (url.StartsWith("/theirmove"))
                 {
                     // 解析 URL 参数
-                    var uri = new Uri("http://localhost" + request.Split(' ')[1]);
+                    var uri = new Uri("http://localhost" + request.ToString().Split(' ')[1]);
                     var query = HttpUtility.ParseQueryString(uri.Query);
 
                     var player = query.Get("player");
@@ -231,10 +240,10 @@ namespace server
                 }
 
                 //处理Quit
-                else if (request.StartsWith("GET /quit"))
+                else if (url.StartsWith("/quit"))
                 {
                     //解析URL的参数
-                    var uri = new Uri("http://localhost" + request.Split(' ')[1]);
+                    var uri = new Uri("http://localhost" + request.ToString().Split(' ')[1]);
                     var query = HttpUtility.ParseQueryString(uri.Query);
 
                     var player = query.Get("player");
@@ -253,10 +262,21 @@ namespace server
                         Console.WriteLine("Invalid id parameter.");
                     }
                 }
+
+                // 在每个请求的最后，发送一个HTTP响应
+                //string response = "HTTP/1.1 200 OK\r\n" +
+                                  //"Content-Type: text/plain\r\n" +
+                                  //"\r\n" +
+                                  //"Request processed successfully.";
+               // byte[] responseBytes = Encoding.UTF8.GetBytes(response);
+               // socket.Send(responseBytes);
             }
-            // 客户端已经关闭连接，现在我们可以关闭我们的端
-            Console.WriteLine("1");
-            socket.Close();
+            catch(SocketException ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            finally { socket.Close(); }                        
+            
         }
 
         //请求的heading
