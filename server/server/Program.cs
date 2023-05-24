@@ -97,6 +97,7 @@ namespace server
                 string response = " ";
                 byte[] responseBytes = Encoding.UTF8.GetBytes(response);
                 socket.Send(responseBytes);
+                Console.WriteLine($"Connection established with {socket.RemoteEndPoint}");
 
                 Task.Run(async() => HandleRequest(socket));
 
@@ -160,6 +161,7 @@ namespace server
                     // 处理请求
                     ///register端点的
 
+                    
                     if (url.StartsWith("/register"))
                     {
                         Console.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId} sent response to  {socket.RemoteEndPoint}  for /register");
@@ -613,10 +615,6 @@ namespace server
                 socket.Send(responseBytes);
             }
         }
-
-
-
-
 
     }
 }
