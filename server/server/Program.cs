@@ -159,7 +159,7 @@ namespace server
                     // 从请求中获取用户名
                     var requestUri = new Uri("http://localhost:8000" + request.ToString().Split(' ')[1]);
                     var queryParameters = HttpUtility.ParseQueryString(requestUri.Query);
-                    var username = queryParameters.Get("username");
+                    var username = queryParameters.Get("player");
 
                     // 处理 /trygame 请求
                     HandleTryGameRequest(socket, username);

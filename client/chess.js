@@ -54,7 +54,7 @@ let currentGameId = null;
 //点击trygame进行第一次交互，检查用户是否注册
 const Try_Game = () => {
     const username = document.getElementById('username_input').value;
-    fetch(`http://localhost:8000/trygame?username=${encodeURIComponent(username)}`).then(response => {
+    fetch(`http://localhost:8000/trygame?player=${encodeURIComponent(username)}`).then(response => {
         //判断是否收到回复
         if (response.ok) {
             return response.json();
