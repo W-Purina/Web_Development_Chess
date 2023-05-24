@@ -106,6 +106,7 @@ namespace server
             {
                 socket = _SeverSocket.EndAccept(AR);
                 Console.WriteLine($"Connection established with {socket.RemoteEndPoint}");
+
             }
             catch (ObjectDisposedException)
             {
@@ -253,8 +254,8 @@ namespace server
                     }
                 }
             }
-
             // 客户端已经关闭连接，现在我们可以关闭我们的端
+            Console.WriteLine("1");
             socket.Close();
         }
 
