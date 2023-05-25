@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.X86;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Web;
 
 namespace server
@@ -47,9 +48,14 @@ namespace server
     //移动数据-3个参数
     public class Move
     {
-        public string Piece { get; set; }
-        public string From { get; set; }
-        public string To { get; set; }
+        [JsonPropertyName("piece")]
+        public string piece { get; set; }
+
+        [JsonPropertyName("from")]
+        public string from { get; set; }
+
+        [JsonPropertyName("to")]
+        public string to { get; set; }
     }
 
     //玩家移动数据
@@ -73,6 +79,7 @@ namespace server
             "Liam","Emma","Noah","Ava","Mason","Sophia","Lucas","Isabella","Oliver","Mia","Aiden","Charlotte","Elijah",
             "Amelia","James","Harper","Benjamin","Evelyn"
         };
+
         private static HashSet<string> registeredUsers = new HashSet<string>();
 
         static async Task Main(string[] args)
@@ -97,14 +104,15 @@ namespace server
                 string response = " ";
                 byte[] responseBytes = Encoding.UTF8.GetBytes(response);
                 socket.Send(responseBytes);
+
                 Console.WriteLine($"Connection established with {socket.RemoteEndPoint}");
+
 
                 Task.Run(async() => HandleRequest(socket));
 
             }
-
         }
-   
+
         //处理请求
         private static void HandleRequest(Socket socket)
         {
@@ -151,7 +159,7 @@ namespace server
                     var requestLine = requestLines[0].Split(" ");
                     if (requestLine.Length < 2)
                     {
-                        Console.WriteLine("The request line does not contain enough elements.");
+                       Console.WriteLine("The request line does not contain enough elements.");
                         return;
                     }
 
@@ -159,13 +167,13 @@ namespace server
                     string url = requestLine[1];
 
                     // 处理请求
-                    ///register端点的
-
-                    
+                    ///register端点的              
                     if (url.StartsWith("/register"))
                     {
-                        Console.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId} sent response to  {socket.RemoteEndPoint}  for /register");
+
                         HandleRegisterRequest(socket);
+                        Console.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId} sent response to  {socket.RemoteEndPoint}  for /register");
+
 
                     }
 
@@ -214,14 +222,15 @@ namespace server
                         var player = query.Get("player");
                         string idString = query.Get("id");
                         var move = query.Get("move");
+                        string encodedMove = HttpUtility.UrlEncode(move);
 
                         Guid id;
                         if (!string.IsNullOrEmpty(idString) && Guid.TryParse(idString, out id))
                         {
-                            Console.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId} send response to {socket.RemoteEndPoint}  for /mymove?player={player}&id={idString}&move={move}");
+                            Console.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId} send response to {socket.RemoteEndPoint}  for /mymove?player={player}&id={idString}&move={encodedMove}");
 
                             // id 参数有效，可以使用 id 进行后续操作
-                            HandleMyMoveRequest(socket, player, id, move);
+                            HandleMyMoveRequest(socket, player, id, encodedMove);
                         }
                         else
                         {
@@ -288,8 +297,11 @@ namespace server
             {
                 Console.WriteLine(ex.ToString());
             }
-            finally { socket.Close(); }                        
-            
+            finally 
+            { 
+                socket.Close();
+                Console.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId} closing connection with {socket.RemoteEndPoint}");
+            }
         }
 
         //请求的heading
@@ -300,7 +312,7 @@ namespace server
                    "Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS\r\n" +
                    "Access-Control-Allow-Headers: Content-Type\r\n" +
                    "Content-Type: application/json\r\n" +
-                   "Content-Length: " + jsonContent.Length + "\r\n\r\n" + jsonContent;
+                   "Content-Length: " + jsonContent.Length + "\r\n\r\n" + jsonContent+"\n";
         }
 
         //注册需求
@@ -437,10 +449,12 @@ namespace server
         }
 
         //处理玩家发送move
-        public static void HandleMyMoveRequest(Socket socket, string username, Guid gameId, string move)
+        public static void HandleMyMoveRequest(Socket socket, string username, Guid gameId, string encodedMove)
         {
             string response;
             byte[] responseBytes;  // 这里声明了responseBytes变量
+            string move = HttpUtility.UrlDecode(encodedMove); //解码move
+            Console.WriteLine(move);
 
             // 解析move字符串成为Move列表对象
             List<Move> moveList = JsonSerializer.Deserialize<List<Move>>(move);
@@ -477,6 +491,9 @@ namespace server
                             return;
                         }
                     }
+
+                    Console.WriteLine(JsonSerializer.Serialize(currentGame.Player1LastMove));
+                    Console.WriteLine(JsonSerializer.Serialize(currentGame.Player2LastMove));
 
                     // 返回更新后的游戏记录
                     var jsonResponse = JsonSerializer.Serialize(currentGame);
