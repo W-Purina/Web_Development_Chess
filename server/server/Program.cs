@@ -274,6 +274,7 @@ namespace server
                             Console.WriteLine($"Thread {Thread.CurrentThread.ManagedThreadId} closing connection with {socket.RemoteEndPoint} and terminating");
                             // id 参数有效，可以使用 id 进行后续操作
                             HandleQuitRequest(socket, player, id);
+                            socket.Close();
                         }
                         else
                         {

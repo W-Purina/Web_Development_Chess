@@ -143,12 +143,13 @@ const checkGameState = (username) => {
                 if (gameRecord.Player1 != currentUser) {
                     document.getElementById('Send_my_move').style.display = 'none';
                     document.getElementById('Get_their_move').style.display = 'block';
-                    messageElement.innerText = "Game is in progress with player: " + gameRecord.Player1;
+                    messageElement.innerText = "Your chess is Black,Game is in progress,playing with player: " + gameRecord.Player1;
                 }
                 else {
+                    isGameActive = true;
                     document.getElementById('Send_my_move').style.display = 'block';
                     document.getElementById('Get_their_move').style.display = 'none';
-                    messageElement.innerText = "Game is in progress with player: " + gameRecord.Player2;
+                    messageElement.innerText = "Your chess is White,Game is in progress with player: " + gameRecord.Player2;
                 }
                 clearInterval(pollingIntervalId)
             }
