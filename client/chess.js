@@ -109,7 +109,7 @@ const Pair_player = (username) => {
             else if (gameRecord.status === "inline") {
                 window.alert("You have alread in the line");
             }
-            else if (gameRecord.GameState === "progress" && gameRecord.Authenticate ===currentUser) {
+            else if (gameRecord.GameState === "progress") {
                 // 在匹配到对手之后，将锁设为true
                 isGameActive = true;
                 window.alert(gameRecord.Player1 + " is playing with " + gameRecord.Player2);
@@ -146,7 +146,6 @@ const checkGameState = (username) => {
                     messageElement.innerText = "Game is in progress with player: " + gameRecord.Player1;
                 }
                 else {
-                    isGameActive = true;
                     document.getElementById('Send_my_move').style.display = 'block';
                     document.getElementById('Get_their_move').style.display = 'none';
                     messageElement.innerText = "Game is in progress with player: " + gameRecord.Player2;
@@ -181,15 +180,12 @@ const Send_my_move = (username, move) => {
 
             //检查当前player的LastMove是否是null
             if (currentUser != round && moveString != null) {
-                isGameActive = false;
                 window.alert("You have moved")
             }
             else if (message == "No move made.") {
-                isGameActive = true;
                 window.alert("You haven't moved")
             }
             else if (message == "Not your turn.") {
-                isGameActive = true;
                 window.alert("It is not your round")
             }
 
@@ -244,12 +240,12 @@ const Get_their_move = () => {
 //处理返回棋子信息的移动
 function movePiece(piece, from, to) {
     //根据pieceId获取棋子元素
-    var pieceElement = document.getElementById(Piece);
+    var pieceElement = document.getElementById(piece);
     //根据to获得目标位置
-    var toPositionElement = document.getElementById(To);
+    var toPositionElement = document.getElementById(to);
 
     // 将棋子从原位置移除
-    var fromPositionElement = document.getElementById(From);
+    var fromPositionElement = document.getElementById(from);
     fromPositionElement.removeChild(pieceElement);
 
     // 将棋子添加到新位置
@@ -343,6 +339,7 @@ const pieceIdToImageUrlMap = {
     "img-8i": "https://cws.auckland.ac.nz/gas/images/Qb.svg"
 };
 
+
 // 重置棋盘
 const resetBoard = () => {
     // 遍历棋盘上的所有位置
@@ -358,6 +355,7 @@ const resetBoard = () => {
     // 重新创建棋子并将他们放到他们的初始位置
     for (let pieceId in pieceInitialPositionMap) {
         let initialPositionId = pieceInitialPositionMap[pieceId];
+        console.log(initialPositionId);
         let positionElement = document.getElementById(initialPositionId);
         // 用pieceIdToImageUrlMap来获取棋子的图片URL
         let imageUrl = pieceIdToImageUrlMap[pieceId];

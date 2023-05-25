@@ -43,3 +43,18 @@ C:\Users\rpen966\OneDrive - The University of Auckland\Desktop\711-A2\server\ser
 C:\Users\rpen966\OneDrive - The University of Auckland\Desktop\711-A2\server\server\obj\Debug\net7.0\server.pdb
 C:\Users\rpen966\OneDrive - The University of Auckland\Desktop\711-A2\server\server\obj\Debug\net7.0\server.genruntimeconfig.cache
 C:\Users\rpen966\OneDrive - The University of Auckland\Desktop\711-A2\server\server\obj\Debug\net7.0\ref\server.dll
+C:\Users\polaris\Desktop\711-A2-8b31127427576a7aba456651513b0b8bf6323a92\server\server\bin\Debug\net7.0\server.exe
+C:\Users\polaris\Desktop\711-A2-8b31127427576a7aba456651513b0b8bf6323a92\server\server\bin\Debug\net7.0\server.deps.json
+C:\Users\polaris\Desktop\711-A2-8b31127427576a7aba456651513b0b8bf6323a92\server\server\bin\Debug\net7.0\server.runtimeconfig.json
+C:\Users\polaris\Desktop\711-A2-8b31127427576a7aba456651513b0b8bf6323a92\server\server\bin\Debug\net7.0\server.dll
+C:\Users\polaris\Desktop\711-A2-8b31127427576a7aba456651513b0b8bf6323a92\server\server\bin\Debug\net7.0\server.pdb
+C:\Users\polaris\Desktop\711-A2-8b31127427576a7aba456651513b0b8bf6323a92\server\server\obj\Debug\net7.0\server.csproj.AssemblyReference.cache
+C:\Users\polaris\Desktop\711-A2-8b31127427576a7aba456651513b0b8bf6323a92\server\server\obj\Debug\net7.0\server.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\polaris\Desktop\711-A2-8b31127427576a7aba456651513b0b8bf6323a92\server\server\obj\Debug\net7.0\server.AssemblyInfoInputs.cache
+C:\Users\polaris\Desktop\711-A2-8b31127427576a7aba456651513b0b8bf6323a92\server\server\obj\Debug\net7.0\server.AssemblyInfo.cs
+C:\Users\polaris\Desktop\711-A2-8b31127427576a7aba456651513b0b8bf6323a92\server\server\obj\Debug\net7.0\server.csproj.CoreCompileInputs.cache
+C:\Users\polaris\Desktop\711-A2-8b31127427576a7aba456651513b0b8bf6323a92\server\server\obj\Debug\net7.0\server.dll
+C:\Users\polaris\Desktop\711-A2-8b31127427576a7aba456651513b0b8bf6323a92\server\server\obj\Debug\net7.0\refint\server.dll
+C:\Users\polaris\Desktop\711-A2-8b31127427576a7aba456651513b0b8bf6323a92\server\server\obj\Debug\net7.0\server.pdb
+C:\Users\polaris\Desktop\711-A2-8b31127427576a7aba456651513b0b8bf6323a92\server\server\obj\Debug\net7.0\server.genruntimeconfig.cache
+C:\Users\polaris\Desktop\711-A2-8b31127427576a7aba456651513b0b8bf6323a92\server\server\obj\Debug\net7.0\ref\server.dll
